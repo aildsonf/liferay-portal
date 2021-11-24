@@ -92,7 +92,8 @@ public class AntivirusAsyncEventListenerManager {
 
 		if (antivirusAsyncEventListeners != null) {
 			antivirusAsyncEventListeners.forEach(
-				listener -> listener.receive(message));
+				antivirusAsyncEventListener ->
+					antivirusAsyncEventListener.receive(message));
 		}
 
 		antivirusAsyncEventListeners = _serviceTrackerMap.getService(
