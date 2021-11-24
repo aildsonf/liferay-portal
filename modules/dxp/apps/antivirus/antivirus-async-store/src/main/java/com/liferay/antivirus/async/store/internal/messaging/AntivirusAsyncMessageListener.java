@@ -117,7 +117,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 					AntivirusVirusFoundException antivirusVirusFoundException =
 						(AntivirusVirusFoundException)antivirusScannerException;
 
-					// Put original, infected content into quarantine
+					// Quarantine original file
 
 					store.addFile(
 						companyId,
@@ -126,7 +126,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 						store.getFileAsStream(
 							companyId, repositoryId, fileName, versionLabel));
 
-					// Delete original
+					// Delete original file
 
 					store.deleteFile(
 						companyId, repositoryId, fileName, versionLabel);
