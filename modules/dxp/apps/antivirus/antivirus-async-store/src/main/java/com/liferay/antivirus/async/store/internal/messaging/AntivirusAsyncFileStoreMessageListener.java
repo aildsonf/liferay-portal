@@ -87,12 +87,12 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 		scan((String)message.getPayload());
 	}
 
-	public void scan(String rootDirAbsolutePath) {
+	public void scan(String rootDirAbsolutePathString) {
 		if (_log.isDebugEnabled()) {
-			_log.debug("Scanning " + rootDirAbsolutePath);
+			_log.debug("Scanning " + rootDirAbsolutePathString);
 		}
 
-		Path rootPath = Paths.get(rootDirAbsolutePath);
+		Path rootPath = Paths.get(rootDirAbsolutePathString);
 
 		try {
 			Files.walkFileTree(
