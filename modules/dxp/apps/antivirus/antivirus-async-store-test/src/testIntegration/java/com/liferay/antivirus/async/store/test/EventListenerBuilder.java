@@ -29,7 +29,7 @@ public class EventListenerBuilder {
 			AntivirusAsyncEvent antivirusAsyncEvent =
 				(AntivirusAsyncEvent)message.get("antivirusAsyncEvent");
 
-			Runnable runnable = _eventHandlers.get(antivirusAsyncEvent);
+			Runnable runnable = _runnables.get(antivirusAsyncEvent);
 
 			runnable.run();
 		};
@@ -38,12 +38,12 @@ public class EventListenerBuilder {
 	public EventListenerBuilder register(
 		AntivirusAsyncEvent antivirusAsyncEvent, Runnable runnable) {
 
-		_eventHandlers.put(antivirusAsyncEvent, runnable);
+		_runnables.put(antivirusAsyncEvent, runnable);
 
 		return this;
 	}
 
-	private final EnumMap<AntivirusAsyncEvent, Runnable> _eventHandlers =
+	private final EnumMap<AntivirusAsyncEvent, Runnable> _runnables =
 		new EnumMap<>(AntivirusAsyncEvent.class);
 
 }
