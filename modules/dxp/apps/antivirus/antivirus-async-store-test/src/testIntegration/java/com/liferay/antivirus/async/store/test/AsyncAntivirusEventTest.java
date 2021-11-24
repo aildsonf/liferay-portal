@@ -111,8 +111,8 @@ public class AsyncAntivirusEventTest {
 				1, 1,
 				() -> {
 
-					// It's possible for a file to be removed between the time
-					// it is added and the time it is scanned.
+					// It is possible for a file to be removed between the time
+					// it is added and the time it is scanned
 
 					Message dummyAntivirusMessage =
 						_createDummyAntivirusMessage();
@@ -123,7 +123,7 @@ public class AsyncAntivirusEventTest {
 
 					Assert.assertTrue(missingFired.get());
 
-					// Finally ensure the scanner was not called
+					// Ensure the scanner was not called
 
 					Assert.assertFalse(scannerWasCalled.get());
 				});
@@ -279,7 +279,7 @@ public class AsyncAntivirusEventTest {
 
 					Assert.assertTrue(prepareEventFired.get());
 
-					// Finally ensure the scanner was called
+					// Ensure the scanner was called
 
 					Assert.assertTrue(scannerWasCalled.get());
 				});
@@ -340,7 +340,7 @@ public class AsyncAntivirusEventTest {
 
 					Assert.assertTrue(prepareEventFired.get());
 
-					// Finally check if the scanner was actually called
+					// Ensure the scanner was called
 
 					Assert.assertTrue(scannerWasCalled.get());
 				});
@@ -408,7 +408,7 @@ public class AsyncAntivirusEventTest {
 
 					Assert.assertTrue(prepareEventFired.get());
 
-					// Finally ensure the scanner was called
+					// Ensure the scanner was called
 
 					Assert.assertTrue(scannerWasCalled.get());
 				});
