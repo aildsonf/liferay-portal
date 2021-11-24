@@ -88,45 +88,8 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 	}
 
 	public void scan(String rootDirAbsolutePathString) {
-		if (_log.isDebugEnabled()) {
-			_log.debug("Scanning " + rootDirAbsolutePathString);
-		}
-
-		Path rootPath = Paths.get(rootDirAbsolutePathString);
-
 		try {
-			Files.walkFileTree(
-				rootPath,
-				new SimpleFileVisitor<Path>() {
-
-					@Override
-					public FileVisitResult postVisitDirectory(
-							Path dirPath, IOException ioException)
-						throws IOException {
-
-						return FileVisitResult.CONTINUE;
-					}
-
-					@Override
-					public FileVisitResult visitFile(
-							Path filePath,
-							BasicFileAttributes basicFileAttributes)
-						throws IOException {
-
-						try {
-							_scheduleAntivirusScan(rootPath, filePath);
-						}
-						catch (Throwable throwable) {
-							_log.error(
-								"Unable to schedule antivirus scan for " +
-									filePath,
-								throwable);
-						}
-
-						return FileVisitResult.CONTINUE;
-					}
-
-				});
+			_scan(rootDirAbsolutePathString);
 		}
 		catch (IOException ioException) {
 			ReflectionUtil.throwException(ioException);
@@ -157,7 +120,12 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 			MapUtil.singletonDictionary(
 				"destination.name", destination.getName()));
 
-		_init((File)_storeServiceReference.getProperty("rootDir"));
+		try {
+			_init((File)_storeServiceReference.getProperty("rootDir"));
+		}
+		catch (SchedulerException schedulerException) {
+			ReflectionUtil.throwException(schedulerException);
+		}
 	}
 
 	@Deactivate
@@ -175,35 +143,68 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 			"0 0 0/" + _batchInterval + " * * ?");
 	}
 
-	private void _init(File rootDir) {
-		try {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Initializing " + rootDir.getAbsolutePath());
-			}
-
-			SchedulerResponse schedulerResponse =
-				_schedulerEngineHelper.getScheduledJob(
-					rootDir.getAbsolutePath(),
-					AntivirusAsyncConstants.
-						SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH,
-					StorageType.PERSISTED);
-
-			if (schedulerResponse != null) {
-				_schedulerEngineHelper.delete(
-					rootDir.getAbsolutePath(), schedulerResponse.getGroupName(),
-					schedulerResponse.getStorageType());
-			}
-
-			Trigger trigger = _createTrigger(rootDir.getAbsolutePath());
-
-			_schedulerEngineHelper.schedule(
-				trigger, StorageType.PERSISTED, null,
-				AntivirusAsyncDestinationNames.ANTIVIRUS_BATCH,
-				rootDir.getAbsolutePath(), 0);
+	private void _init(File rootDir) throws SchedulerException {
+		if (_log.isDebugEnabled()) {
+			_log.debug("Initializing " + rootDir.getAbsolutePath());
 		}
-		catch (SchedulerException schedulerException) {
-			ReflectionUtil.throwException(schedulerException);
+
+		SchedulerResponse schedulerResponse =
+			_schedulerEngineHelper.getScheduledJob(
+				rootDir.getAbsolutePath(),
+				AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH,
+				StorageType.PERSISTED);
+
+		if (schedulerResponse != null) {
+			_schedulerEngineHelper.delete(
+				rootDir.getAbsolutePath(), schedulerResponse.getGroupName(),
+				schedulerResponse.getStorageType());
 		}
+
+		Trigger trigger = _createTrigger(rootDir.getAbsolutePath());
+
+		_schedulerEngineHelper.schedule(
+			trigger, StorageType.PERSISTED, null,
+			AntivirusAsyncDestinationNames.ANTIVIRUS_BATCH,
+			rootDir.getAbsolutePath(), 0);
+	}
+
+	private void _scan(String rootDirAbsolutePathString) throws IOException {
+		if (_log.isDebugEnabled()) {
+			_log.debug("Scanning " + rootDirAbsolutePathString);
+		}
+
+		Path rootPath = Paths.get(rootDirAbsolutePathString);
+
+		Files.walkFileTree(
+			rootPath,
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult postVisitDirectory(
+						Path dirPath, IOException ioException)
+					throws IOException {
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(
+						Path filePath, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
+					try {
+						_scheduleAntivirusScan(rootPath, filePath);
+					}
+					catch (Throwable throwable) {
+						_log.error(
+							"Unable to schedule antivirus scan for " + filePath,
+							throwable);
+					}
+
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
 	}
 
 	private void _scheduleAntivirusScan(Path rootPath, Path filePath) {
