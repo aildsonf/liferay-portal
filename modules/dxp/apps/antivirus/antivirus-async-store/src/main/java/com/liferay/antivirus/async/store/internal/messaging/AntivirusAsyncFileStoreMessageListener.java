@@ -84,9 +84,7 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 
 	@Override
 	public void receive(Message message) throws MessageListenerException {
-		String rootDirAbsolutePath = (String)message.getPayload();
-
-		scan(rootDirAbsolutePath);
+		scan((String)message.getPayload());
 	}
 
 	public void scan(String rootDirAbsolutePath) {
@@ -179,31 +177,29 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 
 	private void _init(File rootDir) {
 		try {
-			String rootDirAbsolutePath = rootDir.getAbsolutePath();
-
 			if (_log.isDebugEnabled()) {
-				_log.debug("Initializing " + rootDirAbsolutePath);
+				_log.debug("Initializing " + rootDir.getAbsolutePath());
 			}
 
 			SchedulerResponse schedulerResponse =
 				_schedulerEngineHelper.getScheduledJob(
-					rootDirAbsolutePath,
+					rootDir.getAbsolutePath(),
 					AntivirusAsyncConstants.
 						SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH,
 					StorageType.PERSISTED);
 
 			if (schedulerResponse != null) {
 				_schedulerEngineHelper.delete(
-					rootDirAbsolutePath, schedulerResponse.getGroupName(),
+					rootDir.getAbsolutePath(), schedulerResponse.getGroupName(),
 					schedulerResponse.getStorageType());
 			}
 
-			Trigger trigger = _createTrigger(rootDirAbsolutePath);
+			Trigger trigger = _createTrigger(rootDir.getAbsolutePath());
 
 			_schedulerEngineHelper.schedule(
 				trigger, StorageType.PERSISTED, null,
 				AntivirusAsyncDestinationNames.ANTIVIRUS_BATCH,
-				rootDirAbsolutePath, 0);
+				rootDir.getAbsolutePath(), 0);
 		}
 		catch (SchedulerException schedulerException) {
 			ReflectionUtil.throwException(schedulerException);
