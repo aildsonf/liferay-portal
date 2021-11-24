@@ -91,7 +91,7 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 
 	public void scan(String rootDirAbsolutePath) {
 		if (_log.isDebugEnabled()) {
-			_log.debug("Batch scanning " + rootDirAbsolutePath);
+			_log.debug("Scanning " + rootDirAbsolutePath);
 		}
 
 		Path rootPath = Paths.get(rootDirAbsolutePath);
@@ -120,9 +120,8 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 						}
 						catch (Throwable throwable) {
 							_log.error(
-								StringBundler.concat(
-									"Error occured scheduling antivirus batch ",
-									"scan for file ", filePath),
+								"Unable to schedule antivirus scan for " +
+									filePath,
 								throwable);
 						}
 
@@ -236,7 +235,7 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 
 		relativePath = repositoryIdPath.relativize(relativePath);
 
-		// Version Label
+		// Version label
 
 		String versionLabel = String.valueOf(relativePath.getFileName());
 
