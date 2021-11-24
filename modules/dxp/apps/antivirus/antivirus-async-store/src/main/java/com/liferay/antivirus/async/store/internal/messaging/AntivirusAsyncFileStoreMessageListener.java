@@ -178,13 +178,13 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 	}
 
 	private void _init(File rootDir) {
-		String rootDirAbsolutePath = rootDir.getAbsolutePath();
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Initializing " + rootDirAbsolutePath);
-		}
-
 		try {
+			String rootDirAbsolutePath = rootDir.getAbsolutePath();
+
+			if (_log.isDebugEnabled()) {
+				_log.debug("Initializing " + rootDirAbsolutePath);
+			}
+
 			SchedulerResponse schedulerResponse =
 				_schedulerEngineHelper.getScheduledJob(
 					rootDirAbsolutePath,
