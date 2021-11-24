@@ -12,7 +12,7 @@
  *
  */
 
-package com.liferay.antivirus.async.store.internal.retry;
+package com.liferay.antivirus.async.store.internal.event;
 
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
