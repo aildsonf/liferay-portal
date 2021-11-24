@@ -103,9 +103,7 @@ public class AntivirusAsyncStatisticsManager
 		}
 		catch (SchedulerException schedulerException) {
 			_log.error(
-				"An error occured attempting to retrieve the number of " +
-					"scheduled async antivirus scans",
-				schedulerException);
+				"Unable to get antivirus scheduled jobs", schedulerException);
 		}
 
 		return pendingScanCount;
