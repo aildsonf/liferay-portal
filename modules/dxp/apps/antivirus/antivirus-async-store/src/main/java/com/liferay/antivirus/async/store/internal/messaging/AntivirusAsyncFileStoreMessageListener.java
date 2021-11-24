@@ -298,6 +298,10 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 		message.put("companyId", companyId);
 		message.put("fileExtension", fileExtension);
 		message.put("fileName", fileName);
+		message.put(
+			"jobName",
+			AntivirusAsyncUtil.getJobName(
+				companyId, repositoryId, fileName, versionLabel));
 		message.put("repositoryId", repositoryId);
 
 		try {
@@ -313,14 +317,8 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 			_log.error(ioException, ioException);
 		}
 
-		message.put("versionLabel", versionLabel);
-
 		message.put("userId", 0L);
-
-		message.put(
-			"jobName",
-			AntivirusAsyncUtil.getJobName(
-				companyId, repositoryId, fileName, versionLabel));
+		message.put("versionLabel", versionLabel);
 
 		_antivirusAsyncEventListenerManager.onPrepare(message);
 
