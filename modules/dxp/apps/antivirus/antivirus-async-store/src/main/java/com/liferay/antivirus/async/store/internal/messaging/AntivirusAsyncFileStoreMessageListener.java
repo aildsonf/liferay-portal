@@ -12,7 +12,7 @@
  *
  */
 
-package com.liferay.antivirus.async.store.internal.file.store;
+package com.liferay.antivirus.async.store.internal.messaging;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
@@ -80,7 +80,7 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = MessageListener.class
 )
-public class AntivirusAsyncFileStoreInitializer implements MessageListener {
+public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 
 	@Override
 	public void receive(Message message) throws MessageListenerException {
@@ -330,7 +330,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		AntivirusAsyncFileStoreInitializer.class);
+		AntivirusAsyncFileStoreMessageListener.class);
 
 	@Reference
 	private AntivirusAsyncEventListenerManager
