@@ -147,10 +147,6 @@ public class AsyncAntivirusStatisticsTest {
 				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				5, 10,
 				() -> {
@@ -159,9 +155,6 @@ public class AsyncAntivirusStatisticsTest {
 							_getAntivirusAsyncStatisticsManager();
 
 					antivirusAsyncStatisticsManagerMBean.refresh();
-
-					// Add a file to the store so that it triggers an async
-					// antivirus scan
 
 					DLFolder dlFolder = DLTestUtil.addDLFolder(
 						_group.getGroupId());
@@ -179,28 +172,20 @@ public class AsyncAntivirusStatisticsTest {
 						}
 					}
 
-					// The first event is PREPARE which is triggered before the
-					// message is sent. Ensure it was called the correct number
-					// of times
-
 					Assert.assertEquals(
 						numberOfFilesToProcess, prepareEventFired.get());
-
-					Assert.assertEquals(
-						successEventFired.get() + virusFoundEventFired.get(),
-						antivirusAsyncStatisticsManagerMBean.
-							getTotalScannedCount());
-
 					Assert.assertEquals(
 						processingErrorEventFired.get(),
 						antivirusAsyncStatisticsManagerMBean.
 							getProcessingErrorCount());
-
 					Assert.assertEquals(
 						sizeExceededEventFired.get(),
 						antivirusAsyncStatisticsManagerMBean.
 							getSizeExceededCount());
-
+					Assert.assertEquals(
+						successEventFired.get() + virusFoundEventFired.get(),
+						antivirusAsyncStatisticsManagerMBean.
+							getTotalScannedCount());
 					Assert.assertEquals(
 						virusFoundEventFired.get(),
 						antivirusAsyncStatisticsManagerMBean.

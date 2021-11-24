@@ -114,17 +114,9 @@ public class AsyncAntivirusQueueOverflowTest {
 				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				1, 10,
 				() -> {
-
-					// Add a file to the store so that it triggers an async
-					// antivirus scan
-
 					DLFolder dlFolder = DLTestUtil.addDLFolder(
 						_group.getGroupId());
 
@@ -132,16 +124,8 @@ public class AsyncAntivirusQueueOverflowTest {
 						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 					}
 
-					// The first event is PREPARE which is triggered before the
-					// message is sent. Ensure it was called 10 times
-
 					Assert.assertEquals(
 						numberOfFilesToProcess, prepareEventFired.get());
-
-					// When the number of incoming scan requests overflows the
-					// the queue they are persisted into the scheduler as retry
-					// jobs and should have triggered RETRY_SCHEDULED event
-
 					Assert.assertTrue(
 						String.valueOf(retryScheduled.get()),
 						retryScheduled.get() > 0);

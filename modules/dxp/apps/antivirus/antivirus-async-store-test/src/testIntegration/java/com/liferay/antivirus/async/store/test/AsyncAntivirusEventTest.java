@@ -103,28 +103,20 @@ public class AsyncAntivirusEventTest {
 				null);
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				1, 1,
 				() -> {
+					Message message = new Message();
 
-					// It is possible for a file to be removed between the time
-					// it is added and the time it is scanned
-
-					Message dummyAntivirusMessage =
-						_createDummyAntivirusMessage();
+					message.put("companyId", 0);
+					message.put("fileName", "test");
+					message.put("repositoryId", 0);
+					message.put("versionLabel", "test");
 
 					_messageBus.sendMessage(
-						AntivirusAsyncDestinationNames.ANTIVIRUS,
-						dummyAntivirusMessage);
+						AntivirusAsyncDestinationNames.ANTIVIRUS, message);
 
 					Assert.assertTrue(missingFired.get());
-
-					// Ensure the scanner was not called
-
 					Assert.assertFalse(scannerWasCalled.get());
 				});
 		}
@@ -171,17 +163,9 @@ public class AsyncAntivirusEventTest {
 				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				1, 1,
 				() -> {
-
-					// Add a file to the store so that it triggers an async
-					// antivirus scan
-
 					DLFolder dlFolder = DLTestUtil.addDLFolder(
 						_group.getGroupId());
 
@@ -197,21 +181,8 @@ public class AsyncAntivirusEventTest {
 						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 					}
 
-					// The first event is PREPARE which is triggered before the
-					// message is sent but indicates that the
-					// AntivirusAsyncDLStore was actually called
-
 					Assert.assertTrue(prepareEventFired.get());
-
-					// The first time through the scanner an processing error is
-					// thrown triggering a PROCESSING_ERROR event
-
 					Assert.assertTrue(processingErrorEventFired.get());
-
-					// When the scheduled event finally fires it will cause a
-					// second scan which will succeed and trigger a SUCCESS
-					// event (which will also unschedule the retry job)
-
 					Assert.assertTrue(retryScheduled.get());
 				});
 		}
@@ -255,33 +226,17 @@ public class AsyncAntivirusEventTest {
 				null);
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				1, 1,
 				() -> {
-
-					// Add a file to the store so that it triggers an async
-					// antivirus scan
-
 					DLFolder dlFolder = DLTestUtil.addDLFolder(
 						_group.getGroupId());
 
 					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
-					Assert.assertTrue(sizeExceededFired.get());
-
-					// The first event is PREPARE which is triggered before the
-					// message is sent but indicates that the
-					// AntivirusAsyncDLStore was actually called
-
 					Assert.assertTrue(prepareEventFired.get());
-
-					// Ensure the scanner was called
-
 					Assert.assertTrue(scannerWasCalled.get());
+					Assert.assertTrue(sizeExceededFired.get());
 				});
 		}
 		finally {
@@ -316,33 +271,17 @@ public class AsyncAntivirusEventTest {
 				null);
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				1, 1,
 				() -> {
-
-					// Add a file to the store so that it triggers an async
-					// antivirus scan
-
 					DLFolder dlFolder = DLTestUtil.addDLFolder(
 						_group.getGroupId());
 
 					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
-					Assert.assertTrue(successFired.get());
-
-					// The first event is PREPARE which is triggered before the
-					// message is sent but indicates that the
-					// AntivirusAsyncDLStore was actually called
-
 					Assert.assertTrue(prepareEventFired.get());
-
-					// Ensure the scanner was called
-
 					Assert.assertTrue(scannerWasCalled.get());
+					Assert.assertTrue(successFired.get());
 				});
 		}
 		finally {
@@ -384,50 +323,23 @@ public class AsyncAntivirusEventTest {
 				null);
 
 		try {
-
-			// This configuration activates the AntivirusAsyncDLStore
-			// implementation which replaces the built in DLStoreImpl
-
 			_withAsyncAntivirusConfiguration(
 				1, 1,
 				() -> {
-
-					// Add a file to the store so that it triggers an async
-					// antivirus scan
-
 					DLFolder dlFolder = DLTestUtil.addDLFolder(
 						_group.getGroupId());
 
 					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
-					Assert.assertTrue(virusFoundFired.get());
-
-					// The first event is PREPARE which is triggered before the
-					// message is sent but indicates that the
-					// AntivirusAsyncDLStore was actually called
-
 					Assert.assertTrue(prepareEventFired.get());
-
-					// Ensure the scanner was called
-
 					Assert.assertTrue(scannerWasCalled.get());
+					Assert.assertTrue(virusFoundFired.get());
 				});
 		}
 		finally {
 			eventListenerServiceRegistration.unregister();
 			antivirusScannerServiceRegistration.unregister();
 		}
-	}
-
-	private Message _createDummyAntivirusMessage() {
-		Message message = new Message();
-
-		message.put("companyId", 0);
-		message.put("fileName", "test");
-		message.put("repositoryId", 0);
-		message.put("versionLabel", "test");
-
-		return message;
 	}
 
 	private void _withAsyncAntivirusConfiguration(
