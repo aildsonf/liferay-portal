@@ -168,15 +168,13 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 	}
 
 	private Trigger _createTrigger(String jobName) {
-		String cronExpression = StringBundler.concat(
-			"0 0 0/", _batchInterval, " * * ?");
-
 		Instant now = Instant.now();
 
 		return _triggerFactory.createTrigger(
 			jobName,
 			AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH,
-			Date.from(now.plusSeconds(30)), null, cronExpression);
+			Date.from(now.plusSeconds(30)), null,
+			"0 0 0/" + _batchInterval + " * * ?");
 	}
 
 	private void _init(File rootDir) {
