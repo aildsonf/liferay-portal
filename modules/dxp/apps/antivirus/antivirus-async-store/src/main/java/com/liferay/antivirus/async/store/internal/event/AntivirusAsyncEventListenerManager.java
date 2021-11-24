@@ -72,7 +72,7 @@ public class AntivirusAsyncEventListenerManager {
 	protected void activate(BundleContext bundleContext) {
 		_serviceTrackerMap = ServiceTrackerMapFactory.openMultiValueMap(
 			bundleContext, AntivirusAsyncEventListener.class, null,
-			_SERVICE_REFERENCE_MAPPER);
+			_serviceReferenceMapper);
 	}
 
 	@Deactivate
@@ -97,7 +97,7 @@ public class AntivirusAsyncEventListenerManager {
 		}
 
 		antivirusAsyncEventListeners = _serviceTrackerMap.getService(
-			_ANY_CLASS);
+			_CLASS_NAME_ANY);
 
 		if (antivirusAsyncEventListeners != null) {
 			antivirusAsyncEventListeners.forEach(
@@ -105,10 +105,10 @@ public class AntivirusAsyncEventListenerManager {
 		}
 	}
 
-	private static final String _ANY_CLASS = "<ANY_CLASS>";
+	private static final String _CLASS_NAME_ANY = "<ANY>";
 
 	private static final ServiceReferenceMapper
-		<String, AntivirusAsyncEventListener> _SERVICE_REFERENCE_MAPPER =
+		<String, AntivirusAsyncEventListener> _serviceReferenceMapper =
 			(serviceReference, emitter) -> {
 				List<String> classNames = StringUtil.asList(
 					serviceReference.getProperty("class.name"));
@@ -118,7 +118,7 @@ public class AntivirusAsyncEventListenerManager {
 				}
 
 				if (classNames.isEmpty()) {
-					emitter.emit(_ANY_CLASS);
+					emitter.emit(_CLASS_NAME_ANY);
 				}
 			};
 
