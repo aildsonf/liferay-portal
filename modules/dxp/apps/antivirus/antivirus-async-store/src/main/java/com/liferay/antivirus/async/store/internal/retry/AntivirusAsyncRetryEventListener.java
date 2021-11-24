@@ -15,8 +15,8 @@
 package com.liferay.antivirus.async.store.internal.retry;
 
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEvent;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEventListener;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.antivirus.async.store.retry.AntivirusAsyncRetryScheduler;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.kernel.messaging.Message;

@@ -16,7 +16,7 @@ package com.liferay.antivirus.async.store.internal.file.store;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
-import com.liferay.antivirus.async.store.internal.events.AntivirusAsyncEventListenerManager;
+import com.liferay.antivirus.async.store.internal.event.AntivirusAsyncEventListenerManager;
 import com.liferay.antivirus.async.store.util.AntivirusAsyncUtil;
 import com.liferay.document.library.kernel.store.Store;
 import com.liferay.petra.reflect.ReflectionUtil;

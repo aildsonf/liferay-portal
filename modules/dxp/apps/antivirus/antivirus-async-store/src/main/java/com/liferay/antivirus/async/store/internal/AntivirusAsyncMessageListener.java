@@ -16,7 +16,7 @@ package com.liferay.antivirus.async.store.internal;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
-import com.liferay.antivirus.async.store.internal.events.AntivirusAsyncEventListenerManager;
+import com.liferay.antivirus.async.store.internal.event.AntivirusAsyncEventListenerManager;
 import com.liferay.antivirus.async.store.retry.AntivirusAsyncRetryScheduler;
 import com.liferay.antivirus.async.store.util.AntivirusAsyncUtil;
 import com.liferay.document.library.kernel.antivirus.AntivirusScanner;

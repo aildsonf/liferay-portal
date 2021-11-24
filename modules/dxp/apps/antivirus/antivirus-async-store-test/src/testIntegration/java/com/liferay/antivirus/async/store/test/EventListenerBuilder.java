@@ -14,8 +14,8 @@
 
 package com.liferay.antivirus.async.store.test;
 
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEvent;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEventListener;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 
 import java.util.EnumMap;
 

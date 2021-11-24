@@ -15,8 +15,8 @@
 package com.liferay.antivirus.async.store.jmx;
 
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEvent;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEventListener;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Destination;

@@ -12,7 +12,7 @@
  *
  */
 
-package com.liferay.antivirus.async.store.events;
+package com.liferay.antivirus.async.store.event;
 
 /**
  * @author Raymond Augé

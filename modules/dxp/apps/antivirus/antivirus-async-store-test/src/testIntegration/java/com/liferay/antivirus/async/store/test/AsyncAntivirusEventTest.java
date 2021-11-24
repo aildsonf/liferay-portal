@@ -16,8 +16,8 @@ package com.liferay.antivirus.async.store.test;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEvent;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEventListener;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.antivirus.async.store.retry.AntivirusAsyncRetryScheduler;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.kernel.antivirus.AntivirusScanner;

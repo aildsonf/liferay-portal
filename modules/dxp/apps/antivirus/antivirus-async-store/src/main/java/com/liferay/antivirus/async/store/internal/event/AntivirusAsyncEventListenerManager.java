@@ -12,10 +12,10 @@
  *
  */
 
-package com.liferay.antivirus.async.store.internal.events;
+package com.liferay.antivirus.async.store.internal.event;
 
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEvent;
-import com.liferay.antivirus.async.store.events.AntivirusAsyncEventListener;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
+import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.osgi.service.tracker.collections.map.ServiceReferenceMapper;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
