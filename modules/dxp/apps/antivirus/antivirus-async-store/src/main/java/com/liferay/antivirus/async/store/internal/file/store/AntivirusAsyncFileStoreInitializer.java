@@ -230,7 +230,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 
 		long repositoryId = GetterUtil.getLong(repositoryIdPath.toString());
 
-		if (repositoryId == AntivirusAsyncConstants.QUARANTINE_REPOSITORY_ID) {
+		if (repositoryId == AntivirusAsyncConstants.REPOSITORY_ID_QUARANTINE) {
 			return;
 		}
 

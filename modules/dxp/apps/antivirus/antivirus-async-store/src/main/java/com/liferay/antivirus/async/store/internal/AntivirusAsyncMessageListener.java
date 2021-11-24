@@ -121,7 +121,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 
 					store.addFile(
 						companyId,
-						AntivirusAsyncConstants.QUARANTINE_REPOSITORY_ID,
+						AntivirusAsyncConstants.REPOSITORY_ID_QUARANTINE,
 						fileName, versionLabel,
 						store.getFileAsStream(
 							companyId, repositoryId, fileName, versionLabel));
