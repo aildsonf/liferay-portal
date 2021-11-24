@@ -104,9 +104,10 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
 						StringBundler.concat(
+							"Schedule ",
 							AntivirusAsyncUtil.getFileIdentifier(message),
-							" is being scheduled persistently for later ",
-							"because the async antivirus queue is overflowing ",
+							" into persistent storage because the async ",
+							"antivirus queue is overflowing: ",
 							message.getValues()));
 				}
 
@@ -130,14 +131,12 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 	}
 
 	private void _receive(Message message) throws Exception {
+		Store store = _storeFactory.getStore();
+
 		long companyId = message.getLong("companyId");
 		long repositoryId = message.getLong("repositoryId");
 		String fileName = message.getString("fileName");
 		String versionLabel = message.getString("versionLabel");
-
-		String fileIdentifier = AntivirusAsyncUtil.getFileIdentifier(message);
-
-		Store store = _storeFactory.getStore();
 
 		boolean fileExists = store.hasFile(
 			companyId, repositoryId, fileName, versionLabel);
@@ -146,8 +145,8 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
-						fileIdentifier, " is no longer present: ",
-						message.getValues()));
+						AntivirusAsyncUtil.getFileIdentifier(message),
+						" is no longer present: ", message.getValues()));
 			}
 
 			_antivirusAsyncEventListenerManager.onMissing(message);
@@ -164,8 +163,8 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					StringBundler.concat(
-						fileIdentifier, " was scanned successfully: ",
-						message.getValues()));
+						AntivirusAsyncUtil.getFileIdentifier(message),
+						" was scanned successfully: ", message.getValues()));
 			}
 
 			_antivirusAsyncEventListenerManager.onSuccess(message);
