@@ -60,7 +60,7 @@ public class AntivirusAsyncRetrySchedulerImpl
 		try {
 			SchedulerResponse schedulerResponse =
 				_schedulerEngineHelper.getScheduledJob(
-					jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_SCAN,
+					jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
 					StorageType.PERSISTED);
 
 			if (schedulerResponse == null) {
@@ -110,7 +110,7 @@ public class AntivirusAsyncRetrySchedulerImpl
 		Instant now = Instant.now();
 
 		return _triggerFactory.createTrigger(
-			jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_SCAN,
+			jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
 			Date.from(now.plusSeconds(10)), null, cronExpression);
 	}
 
