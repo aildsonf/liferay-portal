@@ -84,7 +84,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						StringBundler.concat(
-							fileIdentifier, " is no longer present ",
+							fileIdentifier, " is no longer present: ",
 							message.getValues()));
 				}
 
@@ -102,7 +102,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
 						StringBundler.concat(
-							fileIdentifier, " was scanned successfully ",
+							fileIdentifier, " was scanned successfully: ",
 							message.getValues()));
 				}
 
