@@ -14,7 +14,7 @@
 
 package com.liferay.antivirus.async.store.test;
 
-import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.petra.concurrent.NoticeableThreadPoolExecutor;
 import com.liferay.petra.concurrent.ThreadPoolHandlerAdapter;
 import com.liferay.petra.lang.SafeCloseable;
@@ -34,7 +34,7 @@ public class SyncDestinationUtil {
 
 	public static SafeCloseable sync() {
 		Destination destination = MessageBusUtil.getDestination(
-			AntivirusAsyncConstants.ANTIVIRUS_DESTINATION);
+			AntivirusAsyncDestinationNames.ANTIVIRUS);
 
 		Object originalExecutor = ReflectionTestUtil.getAndSetFieldValue(
 			destination, "_noticeableThreadPoolExecutor",

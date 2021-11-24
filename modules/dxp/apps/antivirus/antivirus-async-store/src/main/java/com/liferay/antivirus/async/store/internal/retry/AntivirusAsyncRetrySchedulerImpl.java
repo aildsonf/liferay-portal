@@ -16,6 +16,7 @@ package com.liferay.antivirus.async.store.internal.retry;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.retry.AntivirusAsyncRetryScheduler;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -85,7 +86,7 @@ public class AntivirusAsyncRetrySchedulerImpl
 
 				_schedulerEngineHelper.schedule(
 					trigger, StorageType.PERSISTED, trigger.getJobName(),
-					AntivirusAsyncConstants.ANTIVIRUS_DESTINATION, message, 0);
+					AntivirusAsyncDestinationNames.ANTIVIRUS, message, 0);
 			}
 		}
 		catch (SchedulerException schedulerException) {

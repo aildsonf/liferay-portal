@@ -15,7 +15,7 @@
 package com.liferay.antivirus.async.store.test;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
-import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.antivirus.async.store.retry.AntivirusAsyncRetryScheduler;
@@ -118,7 +118,7 @@ public class AsyncAntivirusEventTest {
 						_createDummyAntivirusMessage();
 
 					_messageBus.sendMessage(
-						AntivirusAsyncConstants.ANTIVIRUS_DESTINATION,
+						AntivirusAsyncDestinationNames.ANTIVIRUS,
 						dummyAntivirusMessage);
 
 					Assert.assertTrue(missingFired.get());

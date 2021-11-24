@@ -17,13 +17,10 @@ package com.liferay.antivirus.async.store.constants;
 /**
  * @author Raymond Augé
  */
-public class AntivirusAsyncConstants {
+public class AntivirusAsyncDestinationNames {
 
-	public static final String ANTIVIRUS_BATCH_GROUP_NAME =
-		"Antivirus Batch Scan";
+	public static final String ANTIVIRUS = "liferay/antivirus";
 
-	public static final String ANTIVIRUS_GROUP_NAME = "Antivirus Scan";
-
-	public static final long QUARANTINE_REPOSITORY_ID = 999999999999999999L;
+	public static final String ANTIVIRUS_BATCH = "liferay/antivirus_batch";
 
 }

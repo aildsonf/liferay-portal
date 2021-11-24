@@ -15,6 +15,7 @@
 package com.liferay.antivirus.async.store.jmx;
 
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.portal.kernel.log.Log;
@@ -46,7 +47,7 @@ import org.osgi.service.component.annotations.Reference;
 	configurationPid = "com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration",
 	configurationPolicy = ConfigurationPolicy.REQUIRE, immediate = true,
 	property = {
-		"destination.target=(destination.name=" + AntivirusAsyncConstants.ANTIVIRUS_DESTINATION + ")",
+		"destination.target=(destination.name=" + AntivirusAsyncDestinationNames.ANTIVIRUS + ")",
 		"jmx.objectname=com.liferay.antivirus:classification=antivirus_async,name=AntivirusAsyncStatistics",
 		"jmx.objectname.cache.key=AntivirusAsyncStatistics"
 	},

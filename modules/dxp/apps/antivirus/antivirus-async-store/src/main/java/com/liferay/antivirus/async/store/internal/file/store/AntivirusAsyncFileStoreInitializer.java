@@ -16,6 +16,7 @@ package com.liferay.antivirus.async.store.internal.file.store;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.internal.event.AntivirusAsyncEventListenerManager;
 import com.liferay.antivirus.async.store.util.AntivirusAsyncUtil;
 import com.liferay.document.library.kernel.store.Store;
@@ -74,7 +75,7 @@ import org.osgi.service.component.annotations.Reference;
 	configurationPid = "com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration",
 	configurationPolicy = ConfigurationPolicy.REQUIRE, immediate = true,
 	property = {
-		"destination.name=" + AntivirusAsyncConstants.ANTIVIRUS_BATCH_DESTINATION,
+		"destination.name=" + AntivirusAsyncDestinationNames.ANTIVIRUS_BATCH,
 		"osgi.command.function=scan", "osgi.command.scope=antivirus"
 	},
 	service = MessageListener.class
@@ -147,7 +148,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 
 		DestinationConfiguration destinationConfiguration =
 			DestinationConfiguration.createSerialDestinationConfiguration(
-				AntivirusAsyncConstants.ANTIVIRUS_BATCH_DESTINATION);
+				AntivirusAsyncDestinationNames.ANTIVIRUS_BATCH);
 
 		destinationConfiguration.setMaximumQueueSize(1);
 
@@ -202,7 +203,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 
 			_schedulerEngineHelper.schedule(
 				trigger, StorageType.PERSISTED, null,
-				AntivirusAsyncConstants.ANTIVIRUS_BATCH_DESTINATION,
+				AntivirusAsyncDestinationNames.ANTIVIRUS_BATCH,
 				rootDirAbsolutePath, 0);
 		}
 		catch (SchedulerException schedulerException) {
@@ -323,7 +324,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 		_antivirusAsyncEventListenerManager.onPrepare(message);
 
 		_messageBus.sendMessage(
-			AntivirusAsyncConstants.ANTIVIRUS_DESTINATION, message);
+			AntivirusAsyncDestinationNames.ANTIVIRUS, message);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

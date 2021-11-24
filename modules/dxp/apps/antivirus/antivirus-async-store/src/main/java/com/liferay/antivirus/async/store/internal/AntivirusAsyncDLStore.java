@@ -14,7 +14,7 @@
 
 package com.liferay.antivirus.async.store.internal;
 
-import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.internal.event.AntivirusAsyncEventListenerManager;
 import com.liferay.antivirus.async.store.util.AntivirusAsyncUtil;
 import com.liferay.document.library.kernel.exception.AccessDeniedException;
@@ -710,7 +710,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 		_antivirusAsyncEventListenerManager;
 
 	@Reference(
-		target = "(destination.name=" + AntivirusAsyncConstants.ANTIVIRUS_DESTINATION + ")"
+		target = "(destination.name=" + AntivirusAsyncDestinationNames.ANTIVIRUS + ")"
 	)
 	private Destination _destination;
 

@@ -16,6 +16,7 @@ package com.liferay.antivirus.async.store.internal;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.internal.event.AntivirusAsyncEventListenerManager;
 import com.liferay.antivirus.async.store.retry.AntivirusAsyncRetryScheduler;
 import com.liferay.antivirus.async.store.util.AntivirusAsyncUtil;
@@ -55,7 +56,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	configurationPid = "com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration",
 	configurationPolicy = ConfigurationPolicy.REQUIRE, immediate = true,
-	property = "destination.name=" + AntivirusAsyncConstants.ANTIVIRUS_DESTINATION,
+	property = "destination.name=" + AntivirusAsyncDestinationNames.ANTIVIRUS,
 	service = MessageListener.class
 )
 public class AntivirusAsyncMessageListener implements MessageListener {
@@ -161,7 +162,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 
 		DestinationConfiguration destinationConfiguration =
 			DestinationConfiguration.createSerialDestinationConfiguration(
-				AntivirusAsyncConstants.ANTIVIRUS_DESTINATION);
+				AntivirusAsyncDestinationNames.ANTIVIRUS);
 
 		int maximumQueueSize = antivirusAsyncConfiguration.maximumQueueSize();
 
