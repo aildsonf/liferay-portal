@@ -672,10 +672,15 @@ public class AntivirusAsyncDLStore implements DLStore {
 		message.put("entryURL", dlStoreRequest.getEntryURL());
 		message.put("fileExtension", dlStoreRequest.getFileExtension());
 		message.put("fileName", dlStoreRequest.getFileName());
+		message.put(
+			"jobName",
+			AntivirusAsyncUtil.getJobName(
+				dlStoreRequest.getCompanyId(), dlStoreRequest.getRepositoryId(),
+				dlStoreRequest.getFileName(),
+				dlStoreRequest.getVersionLabel()));
 		message.put("repositoryId", dlStoreRequest.getRepositoryId());
 		message.put("size", dlStoreRequest.getSize());
 		message.put("sourceFileName", dlStoreRequest.getSourceFileName());
-		message.put("versionLabel", dlStoreRequest.getVersionLabel());
 
 		long userId = 0;
 
@@ -688,12 +693,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 
 		message.put("userId", userId);
 
-		message.put(
-			"jobName",
-			AntivirusAsyncUtil.getJobName(
-				dlStoreRequest.getCompanyId(), dlStoreRequest.getRepositoryId(),
-				dlStoreRequest.getFileName(),
-				dlStoreRequest.getVersionLabel()));
+		message.put("versionLabel", dlStoreRequest.getVersionLabel());
 
 		_antivirusAsyncEventListenerManager.onPrepare(message);
 
