@@ -12,7 +12,7 @@
  *
  */
 
-package com.liferay.antivirus.async.store.internal;
+package com.liferay.antivirus.async.store.internal.messaging;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
 import com.liferay.antivirus.async.store.constants.AntivirusAsyncConstants;
