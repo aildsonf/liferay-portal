@@ -168,12 +168,12 @@ public class AntivirusAsyncFileStoreMessageListener implements MessageListener {
 	}
 
 	private Trigger _createTrigger(String jobName) {
-		Instant now = Instant.now();
+		Instant instant = Instant.now();
 
 		return _triggerFactory.createTrigger(
 			jobName,
 			AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH,
-			Date.from(now.plusSeconds(30)), null,
+			Date.from(instant.plusSeconds(30)), null,
 			"0 0 0/" + _batchInterval + " * * ?");
 	}
 
