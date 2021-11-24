@@ -19,12 +19,11 @@ package com.liferay.antivirus.async.store.constants;
  */
 public class AntivirusAsyncConstants {
 
+	public static final long QUARANTINE_REPOSITORY_ID = 999999999999999999L;
+
+	public static final String SCHEDULER_GROUP_NAME_ANTIVIRUS = "Antivirus";
+
 	public static final String SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH =
 		"Antivirus Batch";
-
-	public static final String SCHEDULER_GROUP_NAME_ANTIVIRUS =
-		"Antivirus";
-
-	public static final long QUARANTINE_REPOSITORY_ID = 999999999999999999L;
 
 }

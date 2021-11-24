@@ -60,7 +60,8 @@ public class AntivirusAsyncRetrySchedulerImpl
 		try {
 			SchedulerResponse schedulerResponse =
 				_schedulerEngineHelper.getScheduledJob(
-					jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
+					jobName,
+					AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
 					StorageType.PERSISTED);
 
 			if (schedulerResponse == null) {
