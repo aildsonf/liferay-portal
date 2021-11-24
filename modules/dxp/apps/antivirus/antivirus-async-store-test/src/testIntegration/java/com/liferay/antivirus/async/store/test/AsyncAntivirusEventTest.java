@@ -97,7 +97,7 @@ public class AsyncAntivirusEventTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new EventListenerBuilder().register(
+				new AntivirusAsyncEventListenerBuilder().register(
 					AntivirusAsyncEvent.MISSING, () -> missingFired.set(true)
 				).build(),
 				null);
@@ -153,7 +153,7 @@ public class AsyncAntivirusEventTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new EventListenerBuilder().register(
+				new AntivirusAsyncEventListenerBuilder().register(
 					AntivirusAsyncEvent.PREPARE,
 					() -> prepareEventFired.set(true)
 				).register(
@@ -216,7 +216,7 @@ public class AsyncAntivirusEventTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new EventListenerBuilder().register(
+				new AntivirusAsyncEventListenerBuilder().register(
 					AntivirusAsyncEvent.PREPARE,
 					() -> prepareEventFired.set(true)
 				).register(
@@ -262,7 +262,7 @@ public class AsyncAntivirusEventTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new EventListenerBuilder().register(
+				new AntivirusAsyncEventListenerBuilder().register(
 					AntivirusAsyncEvent.PREPARE,
 					() -> prepareEventFired.set(true)
 				).register(
@@ -313,7 +313,7 @@ public class AsyncAntivirusEventTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new EventListenerBuilder().register(
+				new AntivirusAsyncEventListenerBuilder().register(
 					AntivirusAsyncEvent.PREPARE,
 					() -> prepareEventFired.set(true)
 				).register(

@@ -103,7 +103,7 @@ public class AsyncAntivirusQueueOverflowTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new EventListenerBuilder().register(
+				new AntivirusAsyncEventListenerBuilder().register(
 					AntivirusAsyncEvent.PREPARE,
 					prepareEventFired::incrementAndGet
 				).register(

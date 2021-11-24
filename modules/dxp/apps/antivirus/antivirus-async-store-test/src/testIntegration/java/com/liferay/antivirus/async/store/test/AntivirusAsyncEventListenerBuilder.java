@@ -22,7 +22,7 @@ import java.util.EnumMap;
 /**
  * @author Raymond Augé
  */
-public class EventListenerBuilder {
+public class AntivirusAsyncEventListenerBuilder {
 
 	public AntivirusAsyncEventListener build() {
 		return message -> {
@@ -35,7 +35,7 @@ public class EventListenerBuilder {
 		};
 	}
 
-	public EventListenerBuilder register(
+	public AntivirusAsyncEventListenerBuilder register(
 		AntivirusAsyncEvent antivirusAsyncEvent, Runnable runnable) {
 
 		_runnables.put(antivirusAsyncEvent, runnable);
