@@ -150,9 +150,15 @@ public class AsyncAntivirusStatisticsTest {
 			_withAsyncAntivirusConfiguration(
 				5, 10,
 				() -> {
+					ServiceReference<AntivirusAsyncStatisticsManagerMBean>
+						serviceReference = _bundleContext.getServiceReference(
+							AntivirusAsyncStatisticsManagerMBean.class);
+
 					AntivirusAsyncStatisticsManagerMBean
 						antivirusAsyncStatisticsManagerMBean =
-							_getAntivirusAsyncStatisticsManager();
+							_bundleContext.getService(serviceReference);
+
+					Assert.assertNotNull(antivirusAsyncStatisticsManagerMBean);
 
 					antivirusAsyncStatisticsManagerMBean.refresh();
 
@@ -197,22 +203,6 @@ public class AsyncAntivirusStatisticsTest {
 			eventListenerServiceRegistration.unregister();
 			schedulerHelperServiceRegistration.unregister();
 		}
-	}
-
-	private AntivirusAsyncStatisticsManagerMBean
-		_getAntivirusAsyncStatisticsManager() {
-
-		ServiceReference<AntivirusAsyncStatisticsManagerMBean>
-			serviceReference = _bundleContext.getServiceReference(
-				AntivirusAsyncStatisticsManagerMBean.class);
-
-		AntivirusAsyncStatisticsManagerMBean
-			antivirusAsyncStatisticsManagerMBean = _bundleContext.getService(
-				serviceReference);
-
-		Assert.assertNotNull(antivirusAsyncStatisticsManagerMBean);
-
-		return antivirusAsyncStatisticsManagerMBean;
 	}
 
 	private void _withAsyncAntivirusConfiguration(
