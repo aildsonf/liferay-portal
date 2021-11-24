@@ -77,7 +77,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 				dlStoreRequest.getFileName(), dlStoreRequest.getVersionLabel(),
 				new UnsyncByteArrayInputStream(bytes));
 
-			_registerAntivirusCallback(dlStoreRequest);
+			_registerCallback(dlStoreRequest);
 		}
 		catch (AccessDeniedException accessDeniedException) {
 			throw new PrincipalException(accessDeniedException);
@@ -100,7 +100,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 				dlStoreRequest.getFileName(), dlStoreRequest.getVersionLabel(),
 				inputStream);
 
-			_registerAntivirusCallback(dlStoreRequest);
+			_registerCallback(dlStoreRequest);
 		}
 		catch (AccessDeniedException accessDeniedException) {
 			throw new PrincipalException(accessDeniedException);
@@ -144,7 +144,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 					dlStoreRequest.getVersionLabel(), inputStream2);
 			}
 
-			_registerAntivirusCallback(dlStoreRequest);
+			_registerCallback(dlStoreRequest);
 		}
 		catch (AccessDeniedException accessDeniedException) {
 			throw new PrincipalException(accessDeniedException);
@@ -428,7 +428,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 				dlStoreRequest.getFileName(), dlStoreRequest.getVersionLabel(),
 				inputStream);
 
-			_registerAntivirusCallback(dlStoreRequest);
+			_registerCallback(dlStoreRequest);
 		}
 		catch (AccessDeniedException accessDeniedException) {
 			throw new PrincipalException(accessDeniedException);
@@ -458,7 +458,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 				dlStoreRequest.getFileName(), dlStoreRequest.getVersionLabel(),
 				inputStream);
 
-			_registerAntivirusCallback(dlStoreRequest);
+			_registerCallback(dlStoreRequest);
 		}
 		catch (AccessDeniedException accessDeniedException) {
 			throw new PrincipalException(accessDeniedException);
@@ -661,7 +661,7 @@ public class AntivirusAsyncDLStore implements DLStore {
 		_dlValidator.validateVersionLabel(versionLabel);
 	}
 
-	private void _registerAntivirusCallback(DLStoreRequest dlStoreRequest)
+	private void _registerCallback(DLStoreRequest dlStoreRequest)
 		throws PortalException {
 
 		Message message = new Message();
