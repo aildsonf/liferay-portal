@@ -66,84 +66,8 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 
 	@Override
 	public void receive(Message message) {
-		long companyId = message.getLong("companyId");
-		long repositoryId = message.getLong("repositoryId");
-		String fileName = message.getString("fileName");
-		String versionLabel = message.getString("versionLabel");
-
-		String fileIdentifier = AntivirusAsyncUtil.getFileIdentifier(message);
-
-		Store store = _storeFactory.getStore();
-
 		try {
-			boolean fileExists = store.hasFile(
-				companyId, repositoryId, fileName, versionLabel);
-
-			if (!fileExists) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						StringBundler.concat(
-							fileIdentifier, " is no longer present: ",
-							message.getValues()));
-				}
-
-				_antivirusAsyncEventListenerManager.onMissing(message);
-
-				return;
-			}
-
-			try {
-				InputStream inputStream = store.getFileAsStream(
-					companyId, repositoryId, fileName, versionLabel);
-
-				_antivirusScanner.scan(inputStream);
-
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						StringBundler.concat(
-							fileIdentifier, " was scanned successfully: ",
-							message.getValues()));
-				}
-
-				_antivirusAsyncEventListenerManager.onSuccess(message);
-			}
-			catch (AntivirusScannerException antivirusScannerException) {
-				int type = antivirusScannerException.getType();
-
-				if (antivirusScannerException instanceof
-						AntivirusVirusFoundException) {
-
-					AntivirusVirusFoundException antivirusVirusFoundException =
-						(AntivirusVirusFoundException)antivirusScannerException;
-
-					// Quarantine original file
-
-					store.addFile(
-						companyId,
-						AntivirusAsyncConstants.REPOSITORY_ID_QUARANTINE,
-						fileName, versionLabel,
-						store.getFileAsStream(
-							companyId, repositoryId, fileName, versionLabel));
-
-					// Delete original file
-
-					store.deleteFile(
-						companyId, repositoryId, fileName, versionLabel);
-
-					_antivirusAsyncEventListenerManager.onVirusFound(
-						message, antivirusVirusFoundException,
-						antivirusVirusFoundException.getVirusName());
-				}
-				else if (type ==
-							AntivirusScannerException.SIZE_LIMIT_EXCEEDED) {
-
-					_antivirusAsyncEventListenerManager.onSizeExceeded(
-						message, antivirusScannerException);
-				}
-				else {
-					throw antivirusScannerException;
-				}
-			}
+			_receive(message);
 		}
 		catch (Exception exception) {
 			_antivirusAsyncEventListenerManager.onProcessingError(
@@ -202,6 +126,83 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 	protected void deactivate() {
 		if (_destinationServiceRegistration != null) {
 			_destinationServiceRegistration.unregister();
+		}
+	}
+
+	private void _receive(Message message) throws Exception {
+		long companyId = message.getLong("companyId");
+		long repositoryId = message.getLong("repositoryId");
+		String fileName = message.getString("fileName");
+		String versionLabel = message.getString("versionLabel");
+
+		String fileIdentifier = AntivirusAsyncUtil.getFileIdentifier(message);
+
+		Store store = _storeFactory.getStore();
+
+		boolean fileExists = store.hasFile(
+			companyId, repositoryId, fileName, versionLabel);
+
+		if (!fileExists) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					StringBundler.concat(
+						fileIdentifier, " is no longer present: ",
+						message.getValues()));
+			}
+
+			_antivirusAsyncEventListenerManager.onMissing(message);
+
+			return;
+		}
+
+		try {
+			InputStream inputStream = store.getFileAsStream(
+				companyId, repositoryId, fileName, versionLabel);
+
+			_antivirusScanner.scan(inputStream);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					StringBundler.concat(
+						fileIdentifier, " was scanned successfully: ",
+						message.getValues()));
+			}
+
+			_antivirusAsyncEventListenerManager.onSuccess(message);
+		}
+		catch (AntivirusScannerException antivirusScannerException) {
+			int type = antivirusScannerException.getType();
+
+			if (antivirusScannerException instanceof
+					AntivirusVirusFoundException) {
+
+				AntivirusVirusFoundException antivirusVirusFoundException =
+					(AntivirusVirusFoundException)antivirusScannerException;
+
+				// Quarantine original file
+
+				store.addFile(
+					companyId, AntivirusAsyncConstants.REPOSITORY_ID_QUARANTINE,
+					fileName, versionLabel,
+					store.getFileAsStream(
+						companyId, repositoryId, fileName, versionLabel));
+
+				// Delete original file
+
+				store.deleteFile(
+					companyId, repositoryId, fileName, versionLabel);
+
+				_antivirusAsyncEventListenerManager.onVirusFound(
+					message, antivirusVirusFoundException,
+					antivirusVirusFoundException.getVirusName());
+			}
+			else if (type == AntivirusScannerException.SIZE_LIMIT_EXCEEDED) {
+				_antivirusAsyncEventListenerManager.onSizeExceeded(
+					message, antivirusScannerException);
+			}
+			else {
+				throw antivirusScannerException;
+			}
 		}
 	}
 
