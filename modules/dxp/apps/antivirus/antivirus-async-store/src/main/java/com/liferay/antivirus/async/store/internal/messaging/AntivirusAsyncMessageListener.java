@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.messaging.DestinationConfiguration;
 import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageListener;
-import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.messaging.MessageRunnable;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portlet.documentlibrary.store.StoreFactory;
@@ -66,7 +65,7 @@ public class AntivirusAsyncMessageListener implements MessageListener {
 	}
 
 	@Override
-	public void receive(Message message) throws MessageListenerException {
+	public void receive(Message message) {
 		long companyId = message.getLong("companyId");
 		long repositoryId = message.getLong("repositoryId");
 		String fileName = message.getString("fileName");
