@@ -144,11 +144,11 @@ public class AntivirusAsyncStatisticsManager
 		if (antivirusAsyncEvent == AntivirusAsyncEvent.PROCESSING_ERROR) {
 			_processingErrorCounter.incrementAndGet();
 		}
-		else if (antivirusAsyncEvent == AntivirusAsyncEvent.SUCCESS) {
-			_totalScannedCounter.incrementAndGet();
-		}
 		else if (antivirusAsyncEvent == AntivirusAsyncEvent.SIZE_EXCEEDED) {
 			_sizeExceededCounter.incrementAndGet();
+		}
+		else if (antivirusAsyncEvent == AntivirusAsyncEvent.SUCCESS) {
+			_totalScannedCounter.incrementAndGet();
 		}
 		else if (antivirusAsyncEvent == AntivirusAsyncEvent.VIRUS_FOUND) {
 			_virusFoundCounter.incrementAndGet();
