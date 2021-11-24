@@ -55,40 +55,8 @@ public class AntivirusAsyncRetrySchedulerImpl
 
 	@Override
 	public void schedule(Message message) {
-		String jobName = message.getString("jobName");
-
 		try {
-			SchedulerResponse schedulerResponse =
-				_schedulerEngineHelper.getScheduledJob(
-					jobName,
-					AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
-					StorageType.PERSISTED);
-
-			if (schedulerResponse == null) {
-				Trigger trigger = _createTrigger(jobName);
-
-				// Avoid a log message reporting "Unable to deserialize
-				// com.liferay.portal.kernel.util.TransientValue"
-
-				Map<String, Object> map = message.getValues();
-
-				Set<Map.Entry<String, Object>> entrySet = map.entrySet();
-
-				Iterator<Map.Entry<String, Object>> iterator =
-					entrySet.iterator();
-
-				while (iterator.hasNext()) {
-					Map.Entry<String, Object> entry = iterator.next();
-
-					if (entry.getValue() instanceof TransientValue) {
-						iterator.remove();
-					}
-				}
-
-				_schedulerEngineHelper.schedule(
-					trigger, StorageType.PERSISTED, trigger.getJobName(),
-					AntivirusAsyncDestinationNames.ANTIVIRUS, message, 0);
-			}
+			_schedule(message);
 		}
 		catch (SchedulerException schedulerException) {
 			ReflectionUtil.throwException(schedulerException);
@@ -113,6 +81,42 @@ public class AntivirusAsyncRetrySchedulerImpl
 		return _triggerFactory.createTrigger(
 			jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
 			Date.from(now.plusSeconds(10)), null, cronExpression);
+	}
+
+	private void _schedule(Message message) throws SchedulerException {
+		String jobName = message.getString("jobName");
+
+		SchedulerResponse schedulerResponse =
+			_schedulerEngineHelper.getScheduledJob(
+				jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS,
+				StorageType.PERSISTED);
+
+		if (schedulerResponse != null) {
+			return;
+		}
+
+		Trigger trigger = _createTrigger(jobName);
+
+		// Avoid a log message reporting "Unable to deserialize
+		// com.liferay.portal.kernel.util.TransientValue"
+
+		Map<String, Object> map = message.getValues();
+
+		Set<Map.Entry<String, Object>> entrySet = map.entrySet();
+
+		Iterator<Map.Entry<String, Object>> iterator = entrySet.iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<String, Object> entry = iterator.next();
+
+			if (entry.getValue() instanceof TransientValue) {
+				iterator.remove();
+			}
+		}
+
+		_schedulerEngineHelper.schedule(
+			trigger, StorageType.PERSISTED, trigger.getJobName(),
+			AntivirusAsyncDestinationNames.ANTIVIRUS, message, 0);
 	}
 
 	private volatile int _retryInterval;
