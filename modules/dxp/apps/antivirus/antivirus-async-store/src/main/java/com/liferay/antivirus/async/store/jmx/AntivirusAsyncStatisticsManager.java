@@ -151,16 +151,16 @@ public class AntivirusAsyncStatisticsManager
 			_totalScannedCounter.incrementAndGet();
 		}
 		else if (antivirusAsyncEvent == AntivirusAsyncEvent.VIRUS_FOUND) {
-			_virusFoundCounter.incrementAndGet();
 			_totalScannedCounter.incrementAndGet();
+			_virusFoundCounter.incrementAndGet();
 		}
 	}
 
 	@Override
 	public void refresh() {
 		if (System.currentTimeMillis() > _lastRefresh) {
-			_lastRefresh = System.currentTimeMillis();
 			_destinationStatistics = _destination.getDestinationStatistics();
+			_lastRefresh = System.currentTimeMillis();
 			_processingErrorCounter.set(0);
 			_sizeExceededCounter.set(0);
 			_totalScannedCounter.set(0);
