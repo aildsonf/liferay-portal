@@ -175,7 +175,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 		Instant now = Instant.now();
 
 		return _triggerFactory.createTrigger(
-			jobName, AntivirusAsyncConstants.ANTIVIRUS_BATCH_GROUP_NAME,
+			jobName, AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH_SCAN,
 			Date.from(now.plusSeconds(30)), null, cronExpression);
 	}
 
@@ -190,7 +190,7 @@ public class AntivirusAsyncFileStoreInitializer implements MessageListener {
 			SchedulerResponse schedulerResponse =
 				_schedulerEngineHelper.getScheduledJob(
 					rootDirAbsolutePath,
-					AntivirusAsyncConstants.ANTIVIRUS_BATCH_GROUP_NAME,
+					AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_BATCH_SCAN,
 					StorageType.PERSISTED);
 
 			if (schedulerResponse != null) {

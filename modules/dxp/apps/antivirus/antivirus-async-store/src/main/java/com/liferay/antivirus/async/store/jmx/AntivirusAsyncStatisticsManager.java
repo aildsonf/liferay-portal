@@ -96,7 +96,7 @@ public class AntivirusAsyncStatisticsManager
 		try {
 			List<SchedulerResponse> scheduledJobs =
 				_schedulerEngineHelper.getScheduledJobs(
-					AntivirusAsyncConstants.ANTIVIRUS_GROUP_NAME,
+					AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_SCAN,
 					StorageType.PERSISTED);
 
 			pendingScanCount += scheduledJobs.size();

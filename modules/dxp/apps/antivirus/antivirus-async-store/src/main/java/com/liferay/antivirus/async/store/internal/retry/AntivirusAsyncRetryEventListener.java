@@ -62,7 +62,7 @@ public class AntivirusAsyncRetryEventListener
 			SchedulerResponse schedulerResponse =
 				_schedulerEngineHelper.getScheduledJob(
 					message.getString("jobName"),
-					AntivirusAsyncConstants.ANTIVIRUS_GROUP_NAME,
+					AntivirusAsyncConstants.SCHEDULER_GROUP_NAME_ANTIVIRUS_SCAN,
 					StorageType.PERSISTED);
 
 			if (schedulerResponse != null) {
