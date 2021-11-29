@@ -15,6 +15,7 @@
 package com.liferay.antivirus.async.store.test;
 
 import com.liferay.antivirus.async.store.configuration.AntivirusAsyncConfiguration;
+import com.liferay.antivirus.async.store.constants.AntivirusAsyncDestinationNames;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEvent;
 import com.liferay.antivirus.async.store.event.AntivirusAsyncEventListener;
 import com.liferay.antivirus.async.store.jmx.AntivirusAsyncStatisticsManagerMBean;
@@ -29,6 +30,8 @@ import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
+import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -36,10 +39,12 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
+import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.Dictionary;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Assert;
@@ -79,6 +84,333 @@ public class AsyncAntivirusDLStoreTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
+	}
+
+	@Test
+	public void testEventMissing() throws Exception {
+		AtomicBoolean missingFired = new AtomicBoolean();
+
+		AtomicBoolean scannerWasCalled = new AtomicBoolean();
+
+		ServiceRegistration<AntivirusScanner>
+			antivirusScannerServiceRegistration =
+				_bundleContext.registerService(
+					AntivirusScanner.class,
+					new MockAntivirusScanner(() -> scannerWasCalled.set(true)),
+					null);
+
+		ServiceRegistration<AntivirusAsyncEventListener>
+			eventListenerServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncEventListener.class,
+				new AntivirusAsyncEventListenerBuilder().register(
+					AntivirusAsyncEvent.MISSING, () -> missingFired.set(true)
+				).build(),
+				null);
+
+		try {
+			_withAsyncAntivirusConfiguration(
+				1, 1, true,
+				() -> {
+					Message message = new Message();
+
+					message.put("companyId", 0);
+					message.put("fileName", "test");
+					message.put("repositoryId", 0);
+					message.put("versionLabel", "test");
+
+					_messageBus.sendMessage(
+						AntivirusAsyncDestinationNames.ANTIVIRUS, message);
+
+					Assert.assertTrue(missingFired.get());
+					Assert.assertFalse(scannerWasCalled.get());
+				});
+		}
+		finally {
+			eventListenerServiceRegistration.unregister();
+			antivirusScannerServiceRegistration.unregister();
+		}
+	}
+
+	@Test
+	public void testEventProcessingError() throws Exception {
+		AtomicBoolean prepareEventFired = new AtomicBoolean();
+		AtomicBoolean processingErrorEventFired = new AtomicBoolean();
+
+		AtomicBoolean retryScheduled = new AtomicBoolean();
+
+		ServiceRegistration<AntivirusAsyncRetryScheduler>
+			schedulerHelperServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncRetryScheduler.class,
+				message -> retryScheduled.set(true),
+				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
+
+		ServiceRegistration<AntivirusScanner>
+			antivirusScannerServiceRegistration =
+				_bundleContext.registerService(
+					AntivirusScanner.class,
+					new MockAntivirusScanner(
+						() -> {
+							throw new AntivirusScannerException(
+								AntivirusScannerException.PROCESS_FAILURE);
+						}),
+					null);
+
+		ServiceRegistration<AntivirusAsyncEventListener>
+			eventListenerServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncEventListener.class,
+				new AntivirusAsyncEventListenerBuilder().register(
+					AntivirusAsyncEvent.PREPARE,
+					() -> prepareEventFired.set(true)
+				).register(
+					AntivirusAsyncEvent.PROCESSING_ERROR,
+					() -> processingErrorEventFired.set(true)
+				).build(),
+				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+
+		try {
+			_withAsyncAntivirusConfiguration(
+				1, 1, true,
+				() -> {
+					DLFolder dlFolder = DLTestUtil.addDLFolder(
+						_group.getGroupId());
+
+					try (LogCapture logCapture =
+							LoggerTestUtil.configureLog4JLogger(
+								StringBundler.concat(
+									"com.liferay.antivirus.async.web.internal.",
+									"notifications.",
+									"AntivirusAsyncNotification",
+									"EventListener"),
+								LoggerTestUtil.ERROR)) {
+
+						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+					}
+
+					Assert.assertTrue(prepareEventFired.get());
+					Assert.assertTrue(processingErrorEventFired.get());
+					Assert.assertTrue(retryScheduled.get());
+				});
+		}
+		finally {
+			antivirusScannerServiceRegistration.unregister();
+			eventListenerServiceRegistration.unregister();
+			schedulerHelperServiceRegistration.unregister();
+		}
+	}
+
+	@Test
+	public void testEventSizeExceeded() throws Exception {
+		AtomicBoolean prepareEventFired = new AtomicBoolean();
+		AtomicBoolean sizeExceededFired = new AtomicBoolean();
+
+		AtomicBoolean scannerWasCalled = new AtomicBoolean();
+
+		ServiceRegistration<AntivirusScanner>
+			antivirusScannerServiceRegistration =
+				_bundleContext.registerService(
+					AntivirusScanner.class,
+					new MockAntivirusScanner(
+						() -> {
+							scannerWasCalled.set(true);
+
+							throw new AntivirusScannerException(
+								AntivirusScannerException.SIZE_LIMIT_EXCEEDED);
+						}),
+					null);
+
+		ServiceRegistration<AntivirusAsyncEventListener>
+			eventListenerServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncEventListener.class,
+				new AntivirusAsyncEventListenerBuilder().register(
+					AntivirusAsyncEvent.PREPARE,
+					() -> prepareEventFired.set(true)
+				).register(
+					AntivirusAsyncEvent.SIZE_EXCEEDED,
+					() -> sizeExceededFired.set(true)
+				).build(),
+				null);
+
+		try {
+			_withAsyncAntivirusConfiguration(
+				1, 1, true,
+				() -> {
+					DLFolder dlFolder = DLTestUtil.addDLFolder(
+						_group.getGroupId());
+
+					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+
+					Assert.assertTrue(prepareEventFired.get());
+					Assert.assertTrue(scannerWasCalled.get());
+					Assert.assertTrue(sizeExceededFired.get());
+				});
+		}
+		finally {
+			eventListenerServiceRegistration.unregister();
+			antivirusScannerServiceRegistration.unregister();
+		}
+	}
+
+	@Test
+	public void testEventSuccess() throws Exception {
+		AtomicBoolean prepareEventFired = new AtomicBoolean();
+		AtomicBoolean successFired = new AtomicBoolean();
+
+		AtomicBoolean scannerWasCalled = new AtomicBoolean();
+
+		ServiceRegistration<AntivirusScanner>
+			antivirusScannerServiceRegistration =
+				_bundleContext.registerService(
+					AntivirusScanner.class,
+					new MockAntivirusScanner(() -> scannerWasCalled.set(true)),
+					null);
+
+		ServiceRegistration<AntivirusAsyncEventListener>
+			eventListenerServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncEventListener.class,
+				new AntivirusAsyncEventListenerBuilder().register(
+					AntivirusAsyncEvent.PREPARE,
+					() -> prepareEventFired.set(true)
+				).register(
+					AntivirusAsyncEvent.SUCCESS, () -> successFired.set(true)
+				).build(),
+				null);
+
+		try {
+			_withAsyncAntivirusConfiguration(
+				1, 1, true,
+				() -> {
+					DLFolder dlFolder = DLTestUtil.addDLFolder(
+						_group.getGroupId());
+
+					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+
+					Assert.assertTrue(prepareEventFired.get());
+					Assert.assertTrue(scannerWasCalled.get());
+					Assert.assertTrue(successFired.get());
+				});
+		}
+		finally {
+			eventListenerServiceRegistration.unregister();
+			antivirusScannerServiceRegistration.unregister();
+		}
+	}
+
+	@Test
+	public void testEventVirusFound() throws Exception {
+		AtomicBoolean prepareEventFired = new AtomicBoolean();
+		AtomicBoolean virusFoundFired = new AtomicBoolean();
+
+		AtomicBoolean scannerWasCalled = new AtomicBoolean();
+
+		ServiceRegistration<AntivirusScanner>
+			antivirusScannerServiceRegistration =
+				_bundleContext.registerService(
+					AntivirusScanner.class,
+					new MockAntivirusScanner(
+						() -> {
+							scannerWasCalled.set(true);
+
+							throw new AntivirusVirusFoundException(
+								"Virus detected in stream", "foo.virus");
+						}),
+					null);
+
+		ServiceRegistration<AntivirusAsyncEventListener>
+			eventListenerServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncEventListener.class,
+				new AntivirusAsyncEventListenerBuilder().register(
+					AntivirusAsyncEvent.PREPARE,
+					() -> prepareEventFired.set(true)
+				).register(
+					AntivirusAsyncEvent.VIRUS_FOUND,
+					() -> virusFoundFired.set(true)
+				).build(),
+				null);
+
+		try {
+			_withAsyncAntivirusConfiguration(
+				1, 1, true,
+				() -> {
+					DLFolder dlFolder = DLTestUtil.addDLFolder(
+						_group.getGroupId());
+
+					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+
+					Assert.assertTrue(prepareEventFired.get());
+					Assert.assertTrue(scannerWasCalled.get());
+					Assert.assertTrue(virusFoundFired.get());
+				});
+		}
+		finally {
+			eventListenerServiceRegistration.unregister();
+			antivirusScannerServiceRegistration.unregister();
+		}
+	}
+
+	@Test
+	public void testQueueOverflow() throws Exception {
+		int numberOfFilesToProcess = 10;
+
+		AtomicInteger prepareEventFired = new AtomicInteger();
+
+		AtomicInteger retryScheduled = new AtomicInteger();
+
+		ServiceRegistration<AntivirusAsyncRetryScheduler>
+			schedulerHelperServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncRetryScheduler.class,
+				message -> retryScheduled.incrementAndGet(),
+				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
+
+		ServiceRegistration<AntivirusScanner>
+			antivirusScannerServiceRegistration =
+				_bundleContext.registerService(
+					AntivirusScanner.class,
+					new MockAntivirusScanner(
+						() -> {
+							try {
+								Thread.sleep(Long.MAX_VALUE);
+							}
+							catch (InterruptedException interruptedException) {
+							}
+						}),
+					null);
+
+		ServiceRegistration<AntivirusAsyncEventListener>
+			eventListenerServiceRegistration = _bundleContext.registerService(
+				AntivirusAsyncEventListener.class,
+				new AntivirusAsyncEventListenerBuilder().register(
+					AntivirusAsyncEvent.PREPARE,
+					prepareEventFired::incrementAndGet
+				).register(
+					AntivirusAsyncEvent.SUCCESS,
+					() -> {
+					}
+				).build(),
+				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+
+		try {
+			_withAsyncAntivirusConfiguration(
+				1, 10, false,
+				() -> {
+					DLFolder dlFolder = DLTestUtil.addDLFolder(
+						_group.getGroupId());
+
+					for (int i = numberOfFilesToProcess; i > 0; i--) {
+						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+					}
+
+					Assert.assertEquals(
+						numberOfFilesToProcess, prepareEventFired.get());
+					Assert.assertTrue(
+						String.valueOf(retryScheduled.get()),
+						retryScheduled.get() > 0);
+				});
+		}
+		finally {
+			antivirusScannerServiceRegistration.unregister();
+			eventListenerServiceRegistration.unregister();
+			schedulerHelperServiceRegistration.unregister();
+		}
 	}
 
 	@Test
@@ -148,7 +480,7 @@ public class AsyncAntivirusDLStoreTest {
 
 		try {
 			_withAsyncAntivirusConfiguration(
-				5, 10,
+				5, 10, true,
 				() -> {
 					ServiceReference<AntivirusAsyncStatisticsManagerMBean>
 						serviceReference = _bundleContext.getServiceReference(
@@ -206,7 +538,7 @@ public class AsyncAntivirusDLStoreTest {
 	}
 
 	private void _withAsyncAntivirusConfiguration(
-			int maximumQueueSize, int retryInterval,
+			int maximumQueueSize, int retryInterval, boolean sync,
 			UnsafeRunnable<Exception> unsafeRunnable)
 		throws Exception {
 
@@ -219,10 +551,16 @@ public class AsyncAntivirusDLStoreTest {
 
 		try (ConfigurationTemporarySwapper configurationTemporarySwapper =
 				new ConfigurationTemporarySwapper(
-					AntivirusAsyncConfiguration.class.getName(), dictionary);
-			SafeCloseable safeCloseable = SyncDestinationUtil.sync()) {
+					AntivirusAsyncConfiguration.class.getName(), dictionary)) {
 
-			unsafeRunnable.run();
+			if (sync) {
+				try (SafeCloseable safeCloseable = SyncDestinationUtil.sync()) {
+					unsafeRunnable.run();
+				}
+			}
+			else {
+				unsafeRunnable.run();
+			}
 		}
 	}
 
@@ -230,5 +568,8 @@ public class AsyncAntivirusDLStoreTest {
 
 	@DeleteAfterTestRun
 	private Group _group;
+
+	@Inject
+	private MessageBus _messageBus;
 
 }
