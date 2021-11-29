@@ -36,15 +36,15 @@ public class SXPBlueprintEntityModel implements EntityModel {
 				"createDate",
 				locale -> Field.getSortableFieldName(Field.CREATE_DATE),
 				locale -> Field.CREATE_DATE),
-			new StringEntityField(
-				"description",
-				locale -> LocalizationUtil.getLocalizedName(
-					Field.DESCRIPTION, LocaleUtil.toLanguageId(locale))),
 			new DateTimeEntityField(
 				"modifiedDate",
 				locale -> Field.getSortableFieldName(Field.MODIFIED_DATE),
 				locale -> Field.MODIFIED_DATE),
 			new IntegerEntityField("status", locale -> Field.STATUS),
+			new StringEntityField(
+				"description",
+				locale -> LocalizationUtil.getLocalizedName(
+					Field.DESCRIPTION, LocaleUtil.toLanguageId(locale))),
 			new StringEntityField(
 				"title",
 				locale -> Field.getSortableFieldName(

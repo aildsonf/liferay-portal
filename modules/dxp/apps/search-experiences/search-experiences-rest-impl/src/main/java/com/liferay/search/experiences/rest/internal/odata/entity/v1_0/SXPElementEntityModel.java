@@ -32,20 +32,20 @@ public class SXPElementEntityModel implements EntityModel {
 
 	public SXPElementEntityModel() {
 		_entityFieldsMap = EntityModel.toEntityFieldsMap(
+			new BooleanEntityField("hidden", locale -> Field.HIDDEN),
+			new BooleanEntityField("readOnly", locale -> "readOnly"),
 			new DateTimeEntityField(
 				"createDate",
 				locale -> Field.getSortableFieldName(Field.CREATE_DATE),
 				locale -> Field.CREATE_DATE),
-			new StringEntityField(
-				"description",
-				locale -> LocalizationUtil.getLocalizedName(
-					Field.DESCRIPTION, LocaleUtil.toLanguageId(locale))),
-			new BooleanEntityField("hidden", locale -> Field.HIDDEN),
 			new DateTimeEntityField(
 				"modifiedDate",
 				locale -> Field.getSortableFieldName(Field.MODIFIED_DATE),
 				locale -> Field.MODIFIED_DATE),
-			new BooleanEntityField("readOnly", locale -> "readOnly"),
+			new StringEntityField(
+				"description",
+				locale -> LocalizationUtil.getLocalizedName(
+					Field.DESCRIPTION, LocaleUtil.toLanguageId(locale))),
 			new StringEntityField(
 				"title",
 				locale -> Field.getSortableFieldName(
