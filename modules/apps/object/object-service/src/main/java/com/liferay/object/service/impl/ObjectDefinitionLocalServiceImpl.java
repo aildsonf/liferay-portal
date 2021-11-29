@@ -818,10 +818,10 @@ public class ObjectDefinitionLocalServiceImpl
 		objectDefinition.setDescriptionObjectFieldId(descriptionObjectFieldId);
 		objectDefinition.setTitleObjectFieldId(titleObjectFieldId);
 		objectDefinition.setActive(active);
+		objectDefinition.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectDefinition.setPanelAppOrder(panelAppOrder);
 		objectDefinition.setPanelCategoryKey(panelCategoryKey);
 		objectDefinition.setPortlet(portlet);
-		objectDefinition.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectDefinition.setPluralLabelMap(pluralLabelMap);
 
 		if (objectDefinition.isApproved()) {
