@@ -23,12 +23,6 @@ portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(editRemoteAppEntryDisplayContext.getRedirect());
 
 renderResponse.setTitle(editRemoteAppEntryDisplayContext.getTitle());
-
-String publishButtonLabel = "publish";
-
-if (WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), 0L, RemoteAppEntry.class.getName())) {
-	publishButtonLabel = "submit-for-publication";
-}
 %>
 
 <portlet:actionURL name="/remote_app_admin/edit_remote_app_entry" var="editRemoteAppEntryURL" />
@@ -154,7 +148,7 @@ if (WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDispla
 
 	<liferay-frontend:edit-form-footer>
 		<clay:button
-			label="<%= publishButtonLabel %>"
+			label='<%= WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), 0L, RemoteAppEntry.class.getName()) ? "submit-for-publication" : "publish" %>'
 			type="submit"
 		/>
 
