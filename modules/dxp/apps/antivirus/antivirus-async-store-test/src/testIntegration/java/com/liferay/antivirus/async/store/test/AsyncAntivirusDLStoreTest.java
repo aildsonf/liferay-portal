@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -139,9 +140,9 @@ public class AsyncAntivirusDLStoreTest {
 					new Message() {
 						{
 							put("companyId", 0);
-							put("fileName", "test");
+							put("fileName", RandomTestUtil.randomString());
 							put("repositoryId", 0);
-							put("versionLabel", "test");
+							put("versionLabel", RandomTestUtil.randomString());
 						}
 					});
 
@@ -309,7 +310,8 @@ public class AsyncAntivirusDLStoreTest {
 					calledScan.set(true);
 
 					throw new AntivirusVirusFoundException(
-						"Virus detected in stream", "foo.virus");
+						RandomTestUtil.randomString(),
+						RandomTestUtil.randomString());
 				}),
 			null);
 
@@ -440,7 +442,8 @@ public class AsyncAntivirusDLStoreTest {
 
 					if (choice == 1) {
 						throw new AntivirusVirusFoundException(
-							"Virus detected in stream", "foo.virus");
+							RandomTestUtil.randomString(),
+							RandomTestUtil.randomString());
 					}
 					else if (choice == 2) {
 						throw new AntivirusScannerException(
