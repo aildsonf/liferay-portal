@@ -59,18 +59,6 @@ public class OrderItemDTOConverter
 		CPInstance cpInstance = commerceOrderItem.fetchCPInstance();
 		ExpandoBridge expandoBridge = commerceOrderItem.getExpandoBridge();
 
-		String unitOfMeasure = StringPool.BLANK;
-
-		if (commerceOrderItem.getCPMeasurementUnitId() > 0) {
-			CPMeasurementUnit cpMeasurementUnit =
-				_cpMeasurementUnitService.getCPMeasurementUnit(
-					commerceOrderItem.getCPMeasurementUnitId());
-
-			unitOfMeasure = cpMeasurementUnit.getKey();
-		}
-
-		String finalUnitOfMeasure = unitOfMeasure;
-
 		return new OrderItem() {
 			{
 				bookedQuantityId = commerceOrderItem.getBookedQuantityId();
@@ -127,10 +115,22 @@ public class OrderItemDTOConverter
 					cpInstance);
 				skuId = _getSkuId(cpInstance);
 				subscription = commerceOrderItem.isSubscription();
-				unitOfMeasure = finalUnitOfMeasure;
 				unitPrice = commerceOrderItem.getUnitPrice();
 				unitPriceWithTaxAmount =
 					commerceOrderItem.getUnitPriceWithTaxAmount();
+
+				setUnitOfMeasure(
+					() -> {
+						if (commerceOrderItem.getCPMeasurementUnitId() <= 0) {
+							return StringPool.BLANK;
+						}
+
+						CPMeasurementUnit cpMeasurementUnit =
+							_cpMeasurementUnitService.getCPMeasurementUnit(
+								commerceOrderItem.getCPMeasurementUnitId());
+
+						return cpMeasurementUnit.getKey();
+					});
 			}
 		};
 	}
