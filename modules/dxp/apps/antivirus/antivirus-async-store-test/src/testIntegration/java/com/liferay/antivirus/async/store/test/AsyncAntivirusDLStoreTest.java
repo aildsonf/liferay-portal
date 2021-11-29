@@ -115,6 +115,7 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventMissing() throws Exception {
 		AtomicBoolean calledScan = new AtomicBoolean();
+
 		AtomicBoolean firedEventMissing = new AtomicBoolean();
 
 		_registerService(
@@ -125,6 +126,7 @@ public class AsyncAntivirusDLStoreTest {
 					() -> firedEventMissing.set(true)
 				).build()),
 			null);
+
 		_registerService(
 			AntivirusScanner.class,
 			new MockAntivirusScanner(() -> calledScan.set(true)), null);
@@ -151,6 +153,7 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventProcessingError() throws Exception {
 		AtomicBoolean calledSchedule = new AtomicBoolean();
+
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventProcessingError = new AtomicBoolean();
 
@@ -165,6 +168,7 @@ public class AsyncAntivirusDLStoreTest {
 					() -> firedEventProcessingError.set(true)
 				).build()),
 			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+
 		_registerService(
 			AntivirusAsyncRetryScheduler.class,
 			message -> calledSchedule.set(true),
@@ -203,6 +207,7 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventSizeExceeded() throws Exception {
 		AtomicBoolean calledScan = new AtomicBoolean();
+
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventSizeExceeded = new AtomicBoolean();
 
@@ -217,6 +222,7 @@ public class AsyncAntivirusDLStoreTest {
 					() -> firedEventSizeExceeded.set(true)
 				).build()),
 			null);
+
 		_registerService(
 			AntivirusScanner.class,
 			new MockAntivirusScanner(
@@ -244,6 +250,7 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventSuccess() throws Exception {
 		AtomicBoolean calledScan = new AtomicBoolean();
+
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventSuccess = new AtomicBoolean();
 
@@ -258,6 +265,7 @@ public class AsyncAntivirusDLStoreTest {
 					() -> firedEventSuccess.set(true)
 				).build()),
 			null);
+
 		_registerService(
 			AntivirusScanner.class,
 			new MockAntivirusScanner(() -> calledScan.set(true)), null);
@@ -278,6 +286,7 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventVirusFound() throws Exception {
 		AtomicBoolean calledScan = new AtomicBoolean();
+
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventVirusFound = new AtomicBoolean();
 
@@ -292,6 +301,7 @@ public class AsyncAntivirusDLStoreTest {
 					() -> firedEventVirusFound.set(true)
 				).build()),
 			null);
+
 		_registerService(
 			AntivirusScanner.class,
 			new MockAntivirusScanner(
@@ -319,6 +329,7 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testQueueOverflow() throws Exception {
 		AtomicInteger calledSchedule = new AtomicInteger();
+
 		AtomicInteger firedEventPrepare = new AtomicInteger();
 
 		_registerService(
@@ -333,6 +344,7 @@ public class AsyncAntivirusDLStoreTest {
 					}
 				).build()),
 			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+
 		_registerService(
 			AntivirusAsyncRetryScheduler.class,
 			message -> calledSchedule.incrementAndGet(),
