@@ -114,8 +114,8 @@ public class AsyncAntivirusDLStoreTest {
 
 	@Test
 	public void testEventMissing() throws Exception {
-		AtomicBoolean firedEventMissing = new AtomicBoolean();
 		AtomicBoolean calledScan = new AtomicBoolean();
+		AtomicBoolean firedEventMissing = new AtomicBoolean();
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
@@ -143,16 +143,16 @@ public class AsyncAntivirusDLStoreTest {
 						}
 					});
 
-				Assert.assertTrue(firedEventMissing.get());
 				Assert.assertFalse(calledScan.get());
+				Assert.assertTrue(firedEventMissing.get());
 			});
 	}
 
 	@Test
 	public void testEventProcessingError() throws Exception {
+		AtomicBoolean calledSchedule = new AtomicBoolean();
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventProcessingError = new AtomicBoolean();
-		AtomicBoolean calledSchedule = new AtomicBoolean();
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
@@ -194,16 +194,16 @@ public class AsyncAntivirusDLStoreTest {
 					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 				}
 
+				Assert.assertTrue(calledSchedule.get());
 				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(firedEventProcessingError.get());
-				Assert.assertTrue(calledSchedule.get());
 			});
 	}
 
 	@Test
 	public void testEventSizeExceeded() throws Exception {
-		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean calledScan = new AtomicBoolean();
+		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventSizeExceeded = new AtomicBoolean();
 
 		_registerService(
@@ -235,18 +235,17 @@ public class AsyncAntivirusDLStoreTest {
 
 				DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
-				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(calledScan.get());
+				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(firedEventSizeExceeded.get());
 			});
 	}
 
 	@Test
 	public void testEventSuccess() throws Exception {
+		AtomicBoolean calledScan = new AtomicBoolean();
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventSuccess = new AtomicBoolean();
-
-		AtomicBoolean calledScan = new AtomicBoolean();
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
@@ -270,18 +269,17 @@ public class AsyncAntivirusDLStoreTest {
 
 				DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
-				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(calledScan.get());
+				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(firedEventSuccess.get());
 			});
 	}
 
 	@Test
 	public void testEventVirusFound() throws Exception {
+		AtomicBoolean calledScan = new AtomicBoolean();
 		AtomicBoolean firedEventPrepare = new AtomicBoolean();
 		AtomicBoolean firedEventVirusFound = new AtomicBoolean();
-
-		AtomicBoolean calledScan = new AtomicBoolean();
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
@@ -312,19 +310,16 @@ public class AsyncAntivirusDLStoreTest {
 
 				DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
-				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(calledScan.get());
+				Assert.assertTrue(firedEventPrepare.get());
 				Assert.assertTrue(firedEventVirusFound.get());
 			});
 	}
 
 	@Test
 	public void testQueueOverflow() throws Exception {
-		int numberOfFilesToProcess = 10;
-
-		AtomicInteger firedEventPrepare = new AtomicInteger();
-
 		AtomicInteger calledSchedule = new AtomicInteger();
+		AtomicInteger firedEventPrepare = new AtomicInteger();
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
@@ -359,22 +354,22 @@ public class AsyncAntivirusDLStoreTest {
 			() -> {
 				DLFolder dlFolder = DLTestUtil.addDLFolder(_group.getGroupId());
 
+				int numberOfFilesToProcess = 10;
+
 				for (int i = numberOfFilesToProcess; i > 0; i--) {
 					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 				}
 
-				Assert.assertEquals(
-					numberOfFilesToProcess, firedEventPrepare.get());
 				Assert.assertTrue(
 					String.valueOf(calledSchedule.get()),
 					calledSchedule.get() > 0);
+				Assert.assertEquals(
+					numberOfFilesToProcess, firedEventPrepare.get());
 			});
 	}
 
 	@Test
 	public void testStatistics() throws Exception {
-		int numberOfFilesToProcess = 100;
-
 		AtomicInteger firedEventPrepare = new AtomicInteger();
 		AtomicInteger firedEventProcessingError = new AtomicInteger();
 		AtomicInteger firedEventSizeExceeded = new AtomicInteger();
@@ -443,6 +438,8 @@ public class AsyncAntivirusDLStoreTest {
 				Assert.assertNotNull(antivirusAsyncStatisticsManagerMBean);
 
 				antivirusAsyncStatisticsManagerMBean.refresh();
+
+				int numberOfFilesToProcess = 100;
 
 				DLFolder dlFolder = DLTestUtil.addDLFolder(_group.getGroupId());
 
