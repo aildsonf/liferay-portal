@@ -137,8 +137,6 @@ public class RemoteAppEntryLocalServiceImpl
 
 		remoteAppEntryLocalService.deployRemoteAppEntry(remoteAppEntry);
 
-		// Workflow
-
 		return _startWorkflowInstance(userId, remoteAppEntry);
 	}
 
@@ -183,8 +181,6 @@ public class RemoteAppEntryLocalServiceImpl
 		_addResources(remoteAppEntry);
 
 		remoteAppEntryLocalService.deployRemoteAppEntry(remoteAppEntry);
-
-		// Workflow
 
 		return _startWorkflowInstance(userId, remoteAppEntry);
 	}
@@ -472,27 +468,26 @@ public class RemoteAppEntryLocalServiceImpl
 			long userId, RemoteAppEntry remoteAppEntry)
 		throws PortalException {
 
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setAddGroupPermissions(true);
-		serviceContext.setAddGuestPermissions(true);
-		serviceContext.setCompanyId(remoteAppEntry.getCompanyId());
-		serviceContext.setScopeGroupId(WorkflowConstants.DEFAULT_GROUP_ID);
-		serviceContext.setUserId(userId);
-
-		Map<String, Serializable> workflowContext = Collections.singletonMap(
-			WorkflowConstants.CONTEXT_URL,
-			Optional.ofNullable(
-				remoteAppEntry.getCustomElementURLs()
-			).orElse(
-				remoteAppEntry.getIFrameURL()
-			));
-
 		return WorkflowHandlerRegistryUtil.startWorkflowInstance(
 			remoteAppEntry.getCompanyId(), WorkflowConstants.DEFAULT_GROUP_ID,
 			userId, RemoteAppEntry.class.getName(),
 			remoteAppEntry.getRemoteAppEntryId(), remoteAppEntry,
-			serviceContext, workflowContext);
+			new ServiceContext() {
+				{
+					setAddGroupPermissions(true);
+					setAddGuestPermissions(true);
+					setCompanyId(remoteAppEntry.getCompanyId());
+					setScopeGroupId(WorkflowConstants.DEFAULT_GROUP_ID);
+					setUserId(userId);
+				}
+			},
+			Collections.singletonMap(
+				WorkflowConstants.CONTEXT_URL,
+				Optional.ofNullable(
+					remoteAppEntry.getCustomElementURLs()
+				).orElse(
+					remoteAppEntry.getIFrameURL()
+				)));
 	}
 
 	private void _validateCustomElement(
