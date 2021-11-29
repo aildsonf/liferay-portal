@@ -33,7 +33,7 @@ export default function SelectedNodeInfo({errors, setErrors}) {
 
 					<span className="ml-1 mr-1 text-warning">*</span>
 
-					<span title={Liferay.Language.get('the-name-of-the-label')}>
+					<span title={Liferay.Language.get('label-name')}>
 						<ClayIcon
 							className="text-muted"
 							symbol="question-circle-full"
