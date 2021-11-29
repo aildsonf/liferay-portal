@@ -366,17 +366,16 @@ public class AsyncAntivirusDLStoreTest {
 			() -> {
 				DLFolder dlFolder = DLTestUtil.addDLFolder(_group.getGroupId());
 
-				int numberOfFilesToProcess = 10;
+				int count = 10;
 
-				for (int i = numberOfFilesToProcess; i > 0; i--) {
+				for (int i = count; i > 0; i--) {
 					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 				}
 
 				Assert.assertTrue(
 					String.valueOf(calledSchedule.get()),
 					calledSchedule.get() > 0);
-				Assert.assertEquals(
-					numberOfFilesToProcess, firedEventPrepare.get());
+				Assert.assertEquals(count, firedEventPrepare.get());
 			});
 	}
 
@@ -451,7 +450,7 @@ public class AsyncAntivirusDLStoreTest {
 
 				antivirusAsyncStatisticsManagerMBean.refresh();
 
-				int numberOfFilesToProcess = 100;
+				int count = 100;
 
 				DLFolder dlFolder = DLTestUtil.addDLFolder(_group.getGroupId());
 
@@ -463,13 +462,12 @@ public class AsyncAntivirusDLStoreTest {
 								"AntivirusAsyncNotificationEventListener"),
 							LoggerTestUtil.ERROR)) {
 
-					for (int i = numberOfFilesToProcess; i > 0; i--) {
+					for (int i = count; i > 0; i--) {
 						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 					}
 				}
 
-				Assert.assertEquals(
-					numberOfFilesToProcess, firedEventPrepare.get());
+				Assert.assertEquals(count, firedEventPrepare.get());
 				Assert.assertEquals(
 					firedEventProcessingError.get(),
 					antivirusAsyncStatisticsManagerMBean.
