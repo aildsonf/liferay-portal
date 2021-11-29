@@ -69,17 +69,14 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 				null, "no-users-were-found");
 
 		searchContainer.setId("accountUsers");
-
 		searchContainer.setOrderByCol(
 			SearchOrderByUtil.getOrderByCol(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"assignable-account-user-order-by-col", "last-name"));
-
 		searchContainer.setOrderByType(
 			SearchOrderByUtil.getOrderByType(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"assignable-account-user-order-by-type", "asc"));
-
 		searchContainer.setRowChecker(rowChecker);
 
 		String navigation = ParamUtil.getString(

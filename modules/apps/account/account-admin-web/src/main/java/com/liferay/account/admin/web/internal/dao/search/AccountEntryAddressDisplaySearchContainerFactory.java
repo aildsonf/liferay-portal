@@ -55,17 +55,14 @@ public class AccountEntryAddressDisplaySearchContainerFactory {
 			null, "no-addresses-were-found");
 
 		searchContainer.setId("accountEntryAddresses");
-
 		searchContainer.setOrderByCol(
 			SearchOrderByUtil.getOrderByCol(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"address-order-by-col", "name"));
-
 		searchContainer.setOrderByType(
 			SearchOrderByUtil.getOrderByType(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"address-order-by-type", "asc"));
-
 		searchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(liferayPortletResponse));
 

@@ -51,12 +51,10 @@ public class AccountGroupDisplaySearchContainerFactory {
 				null, "no-account-groups-were-found");
 
 		accountGroupDisplaySearchContainer.setId("accountGroups");
-
 		accountGroupDisplaySearchContainer.setOrderByType(
 			SearchOrderByUtil.getOrderByType(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_GROUPS_ADMIN,
 				"account-group-order-by-type", "asc"));
-
 		accountGroupDisplaySearchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(liferayPortletResponse));
 

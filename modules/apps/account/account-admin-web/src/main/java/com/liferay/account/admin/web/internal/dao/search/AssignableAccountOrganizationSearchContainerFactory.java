@@ -48,17 +48,14 @@ public class AssignableAccountOrganizationSearchContainerFactory {
 			null, "no-organizations-were-found");
 
 		searchContainer.setId("organizations");
-
 		searchContainer.setOrderByCol(
 			SearchOrderByUtil.getOrderByCol(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"assignable-account-organization-order-by-col", "name"));
-
 		searchContainer.setOrderByType(
 			SearchOrderByUtil.getOrderByType(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"assignable-account-organization-order-by-type", "asc"));
-
 		searchContainer.setRowChecker(
 			new SelectAccountOrganizationRowChecker(
 				liferayPortletResponse, accountEntryId));

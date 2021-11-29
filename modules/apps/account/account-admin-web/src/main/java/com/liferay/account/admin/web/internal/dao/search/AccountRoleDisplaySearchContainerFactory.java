@@ -58,12 +58,10 @@ public class AccountRoleDisplaySearchContainerFactory {
 
 		searchContainer.setId("accountRoles");
 		searchContainer.setOrderByCol("name");
-
 		searchContainer.setOrderByType(
 			SearchOrderByUtil.getOrderByType(
 				liferayPortletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 				"account-role-order-by-type", "asc"));
-
 		searchContainer.setRowChecker(
 			new AccountRoleRowChecker(liferayPortletResponse));
 
