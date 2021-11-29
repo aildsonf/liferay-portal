@@ -573,9 +573,10 @@ public class AsyncAntivirusDLStoreTest {
 		Destination destination = MessageBusUtil.getDestination(
 			AntivirusAsyncDestinationNames.ANTIVIRUS);
 
-		Object originalExecutor = ReflectionTestUtil.getAndSetFieldValue(
-			destination, "_noticeableThreadPoolExecutor",
-			_syncNoticeableThreadPoolExecutor);
+		Object originalNoticeableThreadPoolExecutor =
+			ReflectionTestUtil.getAndSetFieldValue(
+				destination, "_noticeableThreadPoolExecutor",
+				_syncNoticeableThreadPoolExecutor);
 
 		return new SafeCloseable() {
 
@@ -583,7 +584,7 @@ public class AsyncAntivirusDLStoreTest {
 			public void close() {
 				ReflectionTestUtil.setFieldValue(
 					destination, "_noticeableThreadPoolExecutor",
-					originalExecutor);
+					originalNoticeableThreadPoolExecutor);
 			}
 
 		};
