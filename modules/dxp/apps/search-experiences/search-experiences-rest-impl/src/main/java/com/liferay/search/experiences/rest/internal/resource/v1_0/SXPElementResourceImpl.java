@@ -150,9 +150,9 @@ public class SXPElementResourceImpl
 									Field.TITLE,
 									contextAcceptLanguage.
 										getPreferredLanguageId())));
+						multiMatchQuery.setOperator(MatchQuery.Operator.AND);
 						multiMatchQuery.setType(
 							MultiMatchQuery.Type.PHRASE_PREFIX);
-						multiMatchQuery.setOperator(MatchQuery.Operator.AND);
 
 						add(multiMatchQuery, BooleanClauseOccur.SHOULD);
 
