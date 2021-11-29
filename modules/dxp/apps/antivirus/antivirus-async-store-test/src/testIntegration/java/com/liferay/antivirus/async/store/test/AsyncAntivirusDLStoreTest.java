@@ -188,16 +188,7 @@ public class AsyncAntivirusDLStoreTest {
 			() -> {
 				DLFolder dlFolder = DLTestUtil.addDLFolder(_group.getGroupId());
 
-				try (LogCapture logCapture =
-						LoggerTestUtil.configureLog4JLogger(
-							StringBundler.concat(
-								"com.liferay.antivirus.async.web.internal.",
-								"notifications.",
-								"AntivirusAsyncNotificationEventListener"),
-							LoggerTestUtil.ERROR)) {
-
-					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
-				}
+				DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 
 				Assert.assertTrue(calledSchedule.get());
 				Assert.assertTrue(firedEventPrepare.get());
@@ -475,17 +466,8 @@ public class AsyncAntivirusDLStoreTest {
 
 				DLFolder dlFolder = DLTestUtil.addDLFolder(_group.getGroupId());
 
-				try (LogCapture logCapture =
-						LoggerTestUtil.configureLog4JLogger(
-							StringBundler.concat(
-								"com.liferay.antivirus.async.web.internal.",
-								"notifications.",
-								"AntivirusAsyncNotificationEventListener"),
-							LoggerTestUtil.ERROR)) {
-
-					for (int i = count; i > 0; i--) {
-						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
-					}
+				for (int i = count; i > 0; i--) {
+					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
 				}
 
 				Assert.assertEquals(count, firedEventPrepare.get());
