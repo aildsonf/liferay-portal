@@ -76,7 +76,7 @@ public class SXPElementServiceImpl extends SXPElementServiceBaseImpl {
 			throw new SXPElementReadOnlyException();
 		}
 
-		return sxpElementLocalService.deleteSXPElement(sxpElementId);
+		return sxpElementLocalService.deleteSXPElement(sxpElement);
 	}
 
 	@Override
