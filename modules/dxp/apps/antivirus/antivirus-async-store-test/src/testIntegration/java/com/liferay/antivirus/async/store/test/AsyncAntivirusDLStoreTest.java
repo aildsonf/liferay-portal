@@ -118,16 +118,15 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicBoolean scannerWasCalled = new AtomicBoolean();
 
 		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(() -> scannerWasCalled.set(true)), null);
-
-		_registerService(
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
 					AntivirusAsyncEvent.MISSING, () -> missingFired.set(true)
 				).build()),
 			null);
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(() -> scannerWasCalled.set(true)), null);
 
 		_withAsyncAntivirusConfiguration(
 			1, 1, true,
@@ -154,20 +153,6 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicBoolean retryScheduled = new AtomicBoolean();
 
 		_registerService(
-			AntivirusAsyncRetryScheduler.class,
-			message -> retryScheduled.set(true),
-			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
-
-		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(
-				() -> {
-					throw new AntivirusScannerException(
-						AntivirusScannerException.PROCESS_FAILURE);
-				}),
-			null);
-
-		_registerService(
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
@@ -178,6 +163,18 @@ public class AsyncAntivirusDLStoreTest {
 					() -> processingErrorEventFired.set(true)
 				).build()),
 			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+		_registerService(
+			AntivirusAsyncRetryScheduler.class,
+			message -> retryScheduled.set(true),
+			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(
+				() -> {
+					throw new AntivirusScannerException(
+						AntivirusScannerException.PROCESS_FAILURE);
+				}),
+			null);
 
 		_withAsyncAntivirusConfiguration(
 			1, 1, true,
@@ -208,17 +205,6 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicBoolean sizeExceededFired = new AtomicBoolean();
 
 		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(
-				() -> {
-					scannerWasCalled.set(true);
-
-					throw new AntivirusScannerException(
-						AntivirusScannerException.SIZE_LIMIT_EXCEEDED);
-				}),
-			null);
-
-		_registerService(
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
@@ -228,6 +214,16 @@ public class AsyncAntivirusDLStoreTest {
 					AntivirusAsyncEvent.SIZE_EXCEEDED,
 					() -> sizeExceededFired.set(true)
 				).build()),
+			null);
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(
+				() -> {
+					scannerWasCalled.set(true);
+
+					throw new AntivirusScannerException(
+						AntivirusScannerException.SIZE_LIMIT_EXCEEDED);
+				}),
 			null);
 
 		_withAsyncAntivirusConfiguration(
@@ -251,10 +247,6 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicBoolean scannerWasCalled = new AtomicBoolean();
 
 		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(() -> scannerWasCalled.set(true)), null);
-
-		_registerService(
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
@@ -264,6 +256,9 @@ public class AsyncAntivirusDLStoreTest {
 					AntivirusAsyncEvent.SUCCESS, () -> successFired.set(true)
 				).build()),
 			null);
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(() -> scannerWasCalled.set(true)), null);
 
 		_withAsyncAntivirusConfiguration(
 			1, 1, true,
@@ -286,17 +281,6 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicBoolean scannerWasCalled = new AtomicBoolean();
 
 		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(
-				() -> {
-					scannerWasCalled.set(true);
-
-					throw new AntivirusVirusFoundException(
-						"Virus detected in stream", "foo.virus");
-				}),
-			null);
-
-		_registerService(
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
@@ -306,6 +290,16 @@ public class AsyncAntivirusDLStoreTest {
 					AntivirusAsyncEvent.VIRUS_FOUND,
 					() -> virusFoundFired.set(true)
 				).build()),
+			null);
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(
+				() -> {
+					scannerWasCalled.set(true);
+
+					throw new AntivirusVirusFoundException(
+						"Virus detected in stream", "foo.virus");
+				}),
 			null);
 
 		_withAsyncAntivirusConfiguration(
@@ -330,23 +324,6 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicInteger retryScheduled = new AtomicInteger();
 
 		_registerService(
-			AntivirusAsyncRetryScheduler.class,
-			message -> retryScheduled.incrementAndGet(),
-			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
-
-		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(
-				() -> {
-					try {
-						Thread.sleep(Long.MAX_VALUE);
-					}
-					catch (InterruptedException interruptedException) {
-					}
-				}),
-			null);
-
-		_registerService(
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
@@ -358,6 +335,21 @@ public class AsyncAntivirusDLStoreTest {
 					}
 				).build()),
 			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+		_registerService(
+			AntivirusAsyncRetryScheduler.class,
+			message -> retryScheduled.incrementAndGet(),
+			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(
+				() -> {
+					try {
+						Thread.sleep(Long.MAX_VALUE);
+					}
+					catch (InterruptedException interruptedException) {
+					}
+				}),
+			null);
 
 		_withAsyncAntivirusConfiguration(
 			1, 10, false,
@@ -388,32 +380,6 @@ public class AsyncAntivirusDLStoreTest {
 
 		Random random = new Random();
 
-		_registerService(
-			AntivirusAsyncRetryScheduler.class,
-			message -> {
-			},
-			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
-
-		_registerService(
-			AntivirusScanner.class,
-			new MockAntivirusScanner(
-				() -> {
-					int choice = random.nextInt(4);
-
-					if (choice == 1) {
-						throw new AntivirusVirusFoundException(
-							"Virus detected in stream", "foo.virus");
-					}
-					else if (choice == 2) {
-						throw new AntivirusScannerException(
-							AntivirusScannerException.SIZE_LIMIT_EXCEEDED);
-					}
-					else if (choice == 3) {
-						throw new AntivirusScannerException(
-							AntivirusScannerException.PROCESS_FAILURE);
-					}
-				}),
-			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
@@ -435,6 +401,31 @@ public class AsyncAntivirusDLStoreTest {
 					virusFoundEventFired::incrementAndGet
 				).build()),
 			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
+		_registerService(
+			AntivirusAsyncRetryScheduler.class,
+			message -> {
+			},
+			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
+		_registerService(
+			AntivirusScanner.class,
+			new MockAntivirusScanner(
+				() -> {
+					int choice = random.nextInt(4);
+
+					if (choice == 1) {
+						throw new AntivirusVirusFoundException(
+							"Virus detected in stream", "foo.virus");
+					}
+					else if (choice == 2) {
+						throw new AntivirusScannerException(
+							AntivirusScannerException.SIZE_LIMIT_EXCEEDED);
+					}
+					else if (choice == 3) {
+						throw new AntivirusScannerException(
+							AntivirusScannerException.PROCESS_FAILURE);
+					}
+				}),
+			MapUtil.singletonDictionary(Constants.SERVICE_RANKING, 100));
 
 		_withAsyncAntivirusConfiguration(
 			5, 10, true,
