@@ -524,12 +524,13 @@ public class AssetPublisherHelperTest {
 
 	@Test
 	public void testNotGetAssetWithTagsFromDifferentSite() throws Exception {
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group1.getGroupId());
-
 		String assetTagName1 = RandomTestUtil.randomString();
 
 		AssetTestUtil.addTag(_group1.getGroupId(), assetTagName1);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group1.getGroupId());
+
 		serviceContext.setAssetTagNames(new String[] {assetTagName1});
 
 		JournalTestUtil.addArticle(
