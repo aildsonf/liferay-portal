@@ -131,15 +131,16 @@ public class AsyncAntivirusDLStoreTest {
 		_withAsyncAntivirusConfiguration(
 			1, 1, true,
 			() -> {
-				Message message = new Message();
-
-				message.put("companyId", 0);
-				message.put("fileName", "test");
-				message.put("repositoryId", 0);
-				message.put("versionLabel", "test");
-
 				_messageBus.sendMessage(
-					AntivirusAsyncDestinationNames.ANTIVIRUS, message);
+					AntivirusAsyncDestinationNames.ANTIVIRUS,
+					new Message() {
+						{
+							put("companyId", 0);
+							put("fileName", "test");
+							put("repositoryId", 0);
+							put("versionLabel", "test");
+						}
+					});
 
 				Assert.assertTrue(missingFired.get());
 				Assert.assertFalse(scannerWasCalled.get());
