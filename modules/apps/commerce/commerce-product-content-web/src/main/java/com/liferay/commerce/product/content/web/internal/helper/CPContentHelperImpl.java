@@ -327,7 +327,7 @@ public class CPContentHelperImpl implements CPContentHelper {
 			commerceAccountId = commerceAccount.getCommerceAccountId();
 		}
 
-		// COMMERCE-7966
+		// TODO COMMERCE-7966
 
 		if (!_commerceProductViewPermission.contains(
 				PermissionThreadLocal.getPermissionChecker(), commerceAccountId,
