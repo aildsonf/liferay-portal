@@ -95,9 +95,7 @@ public class UserCommerceMLRecommendationRelatedInfoItemCollectionProviderTest
 			_commerceCurrency.getCode(), _serviceContext);
 
 		_commerceCatalog = addCommerceCatalog();
-
 		_cpDefinitions = _addCPDefinitions();
-
 		_userCommerceMLRecommendations = _addUserCommerceMLRecommendations();
 	}
 
