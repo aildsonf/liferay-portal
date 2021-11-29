@@ -61,7 +61,7 @@ import org.osgi.framework.ServiceRegistration;
  * @author Raymond Augé
  */
 @RunWith(Arquillian.class)
-public class AsyncAntivirusStatisticsTest {
+public class AsyncAntivirusDLStoreTest {
 
 	@ClassRule
 	@Rule
@@ -71,7 +71,7 @@ public class AsyncAntivirusStatisticsTest {
 	@BeforeClass
 	public static void setUpClass() {
 		Bundle bundle = FrameworkUtil.getBundle(
-			AsyncAntivirusStatisticsTest.class);
+			AsyncAntivirusDLStoreTest.class);
 
 		_bundleContext = bundle.getBundleContext();
 	}
