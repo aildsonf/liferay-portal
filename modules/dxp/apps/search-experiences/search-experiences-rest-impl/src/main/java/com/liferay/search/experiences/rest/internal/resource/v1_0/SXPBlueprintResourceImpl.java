@@ -16,20 +16,12 @@ package com.liferay.search.experiences.rest.internal.resource.v1_0;
 
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.WildcardQuery;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.MatchQuery;
-import com.liferay.portal.kernel.search.generic.MultiMatchQuery;
-import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -39,12 +31,12 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
-import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 import com.liferay.search.experiences.rest.dto.v1_0.util.ElementInstanceUtil;
 import com.liferay.search.experiences.rest.dto.v1_0.util.SXPBlueprintUtil;
 import com.liferay.search.experiences.rest.internal.dto.v1_0.converter.SXPBlueprintDTOConverter;
 import com.liferay.search.experiences.rest.internal.odata.entity.v1_0.SXPBlueprintEntityModel;
+import com.liferay.search.experiences.rest.internal.resource.v1_0.util.SearchUtil;
 import com.liferay.search.experiences.rest.internal.resource.v1_0.util.TitleMapUtil;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPBlueprintResource;
 import com.liferay.search.experiences.service.SXPBlueprintService;
@@ -136,41 +128,8 @@ public class SXPBlueprintResourceImpl
 
 		return SearchUtil.search(
 			Collections.emptyMap(),
-			booleanQuery1 -> {
-				if (Validator.isBlank(search)) {
-					return;
-				}
-
-				BooleanQuery booleanQuery2 = new BooleanQueryImpl() {
-					{
-						MultiMatchQuery multiMatchQuery = new MultiMatchQuery(
-							search);
-
-						multiMatchQuery.addFields(
-							Arrays.asList(
-								LocalizationUtil.getLocalizedName(
-									Field.DESCRIPTION,
-									contextAcceptLanguage.
-										getPreferredLanguageId()),
-								LocalizationUtil.getLocalizedName(
-									Field.TITLE,
-									contextAcceptLanguage.
-										getPreferredLanguageId())));
-						multiMatchQuery.setOperator(MatchQuery.Operator.AND);
-						multiMatchQuery.setType(
-							MultiMatchQuery.Type.PHRASE_PREFIX);
-
-						add(multiMatchQuery, BooleanClauseOccur.SHOULD);
-
-						WildcardQuery wildcardQuery = new WildcardQueryImpl(
-							Field.USER_NAME, search + "*");
-
-						add(wildcardQuery, BooleanClauseOccur.SHOULD);
-					}
-				};
-
-				booleanQuery1.add(booleanQuery2, BooleanClauseOccur.MUST);
-			},
+			booleanQuery -> SearchUtil.processSXPBooleanQuery(
+				contextAcceptLanguage, booleanQuery, search),
 			filter,
 			com.liferay.search.experiences.model.SXPBlueprint.class.getName(),
 			search, pagination,
