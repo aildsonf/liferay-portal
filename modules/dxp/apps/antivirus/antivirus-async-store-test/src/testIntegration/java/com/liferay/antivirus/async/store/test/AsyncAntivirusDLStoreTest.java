@@ -26,15 +26,21 @@ import com.liferay.document.library.kernel.antivirus.AntivirusScannerException;
 import com.liferay.document.library.kernel.antivirus.AntivirusVirusFoundException;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.test.util.DLTestUtil;
+import com.liferay.petra.concurrent.NoticeableThreadPoolExecutor;
+import com.liferay.petra.concurrent.ThreadPoolHandlerAdapter;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
+import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.test.log.LogCapture;
@@ -42,8 +48,15 @@ import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
-import java.util.Dictionary;
+import java.io.File;
+import java.io.InputStream;
+
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,7 +102,6 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventMissing() throws Exception {
 		AtomicBoolean missingFired = new AtomicBoolean();
-
 		AtomicBoolean scannerWasCalled = new AtomicBoolean();
 
 		ServiceRegistration<AntivirusScanner>
@@ -102,9 +114,11 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.MISSING, () -> missingFired.set(true)
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.MISSING,
+						() -> missingFired.set(true)
+					).build()),
 				null);
 
 		try {
@@ -135,7 +149,6 @@ public class AsyncAntivirusDLStoreTest {
 	public void testEventProcessingError() throws Exception {
 		AtomicBoolean prepareEventFired = new AtomicBoolean();
 		AtomicBoolean processingErrorEventFired = new AtomicBoolean();
-
 		AtomicBoolean retryScheduled = new AtomicBoolean();
 
 		ServiceRegistration<AntivirusAsyncRetryScheduler>
@@ -158,13 +171,14 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.PREPARE,
-					() -> prepareEventFired.set(true)
-				).register(
-					AntivirusAsyncEvent.PROCESSING_ERROR,
-					() -> processingErrorEventFired.set(true)
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.PREPARE,
+						() -> prepareEventFired.set(true)
+					).put(
+						AntivirusAsyncEvent.PROCESSING_ERROR,
+						() -> processingErrorEventFired.set(true)
+					).build()),
 				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
 
 		try {
@@ -201,9 +215,8 @@ public class AsyncAntivirusDLStoreTest {
 	@Test
 	public void testEventSizeExceeded() throws Exception {
 		AtomicBoolean prepareEventFired = new AtomicBoolean();
-		AtomicBoolean sizeExceededFired = new AtomicBoolean();
-
 		AtomicBoolean scannerWasCalled = new AtomicBoolean();
+		AtomicBoolean sizeExceededFired = new AtomicBoolean();
 
 		ServiceRegistration<AntivirusScanner>
 			antivirusScannerServiceRegistration =
@@ -221,13 +234,14 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.PREPARE,
-					() -> prepareEventFired.set(true)
-				).register(
-					AntivirusAsyncEvent.SIZE_EXCEEDED,
-					() -> sizeExceededFired.set(true)
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.PREPARE,
+						() -> prepareEventFired.set(true)
+					).put(
+						AntivirusAsyncEvent.SIZE_EXCEEDED,
+						() -> sizeExceededFired.set(true)
+					).build()),
 				null);
 
 		try {
@@ -267,12 +281,14 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.PREPARE,
-					() -> prepareEventFired.set(true)
-				).register(
-					AntivirusAsyncEvent.SUCCESS, () -> successFired.set(true)
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.PREPARE,
+						() -> prepareEventFired.set(true)
+					).put(
+						AntivirusAsyncEvent.SUCCESS,
+						() -> successFired.set(true)
+					).build()),
 				null);
 
 		try {
@@ -318,13 +334,14 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.PREPARE,
-					() -> prepareEventFired.set(true)
-				).register(
-					AntivirusAsyncEvent.VIRUS_FOUND,
-					() -> virusFoundFired.set(true)
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.PREPARE,
+						() -> prepareEventFired.set(true)
+					).put(
+						AntivirusAsyncEvent.VIRUS_FOUND,
+						() -> virusFoundFired.set(true)
+					).build()),
 				null);
 
 		try {
@@ -378,14 +395,15 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.PREPARE,
-					prepareEventFired::incrementAndGet
-				).register(
-					AntivirusAsyncEvent.SUCCESS,
-					() -> {
-					}
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.PREPARE,
+						prepareEventFired::incrementAndGet
+					).put(
+						AntivirusAsyncEvent.SUCCESS,
+						() -> {
+						}
+					).build()),
 				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
 
 		try {
@@ -460,22 +478,23 @@ public class AsyncAntivirusDLStoreTest {
 		ServiceRegistration<AntivirusAsyncEventListener>
 			eventListenerServiceRegistration = _bundleContext.registerService(
 				AntivirusAsyncEventListener.class,
-				new AntivirusAsyncEventListenerBuilder().register(
-					AntivirusAsyncEvent.PREPARE,
-					prepareEventFired::incrementAndGet
-				).register(
-					AntivirusAsyncEvent.PROCESSING_ERROR,
-					processingErrorEventFired::incrementAndGet
-				).register(
-					AntivirusAsyncEvent.SIZE_EXCEEDED,
-					sizeExceededEventFired::incrementAndGet
-				).register(
-					AntivirusAsyncEvent.SUCCESS,
-					successEventFired::incrementAndGet
-				).register(
-					AntivirusAsyncEvent.VIRUS_FOUND,
-					virusFoundEventFired::incrementAndGet
-				).build(),
+				_create(
+					HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
+						AntivirusAsyncEvent.PREPARE,
+						prepareEventFired::incrementAndGet
+					).put(
+						AntivirusAsyncEvent.PROCESSING_ERROR,
+						processingErrorEventFired::incrementAndGet
+					).put(
+						AntivirusAsyncEvent.SIZE_EXCEEDED,
+						sizeExceededEventFired::incrementAndGet
+					).put(
+						AntivirusAsyncEvent.SUCCESS,
+						successEventFired::incrementAndGet
+					).put(
+						AntivirusAsyncEvent.VIRUS_FOUND,
+						virusFoundEventFired::incrementAndGet
+					).build()),
 				MapUtil.singletonDictionary(Constants.SERVICE_RANKING, -100));
 
 		try {
@@ -537,24 +556,55 @@ public class AsyncAntivirusDLStoreTest {
 		}
 	}
 
+	private AntivirusAsyncEventListener _create(
+		Map<AntivirusAsyncEvent, Runnable> runnables) {
+
+		return message -> {
+			AntivirusAsyncEvent antivirusAsyncEvent =
+				(AntivirusAsyncEvent)message.get("antivirusAsyncEvent");
+
+			Runnable runnable = runnables.get(antivirusAsyncEvent);
+
+			runnable.run();
+		};
+	}
+
+	private SafeCloseable _sync() {
+		Destination destination = MessageBusUtil.getDestination(
+			AntivirusAsyncDestinationNames.ANTIVIRUS);
+
+		Object originalExecutor = ReflectionTestUtil.getAndSetFieldValue(
+			destination, "_noticeableThreadPoolExecutor",
+			_syncNoticeableThreadPoolExecutor);
+
+		return new SafeCloseable() {
+
+			@Override
+			public void close() {
+				ReflectionTestUtil.setFieldValue(
+					destination, "_noticeableThreadPoolExecutor",
+					originalExecutor);
+			}
+
+		};
+	}
+
 	private void _withAsyncAntivirusConfiguration(
 			int maximumQueueSize, int retryInterval, boolean sync,
 			UnsafeRunnable<Exception> unsafeRunnable)
 		throws Exception {
 
-		Dictionary<String, Object> dictionary =
-			HashMapDictionaryBuilder.<String, Object>put(
-				"maximumQueueSize", maximumQueueSize
-			).put(
-				"retryInterval", retryInterval
-			).build();
-
 		try (ConfigurationTemporarySwapper configurationTemporarySwapper =
 				new ConfigurationTemporarySwapper(
-					AntivirusAsyncConfiguration.class.getName(), dictionary)) {
+					AntivirusAsyncConfiguration.class.getName(),
+					HashMapDictionaryBuilder.<String, Object>put(
+						"maximumQueueSize", maximumQueueSize
+					).put(
+						"retryInterval", retryInterval
+					).build())) {
 
 			if (sync) {
-				try (SafeCloseable safeCloseable = SyncDestinationUtil.sync()) {
+				try (SafeCloseable safeCloseable = _sync()) {
 					unsafeRunnable.run();
 				}
 			}
@@ -571,5 +621,53 @@ public class AsyncAntivirusDLStoreTest {
 
 	@Inject
 	private MessageBus _messageBus;
+
+	private final NoticeableThreadPoolExecutor
+		_syncNoticeableThreadPoolExecutor = new NoticeableThreadPoolExecutor(
+			1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1),
+			Executors.defaultThreadFactory(),
+			new ThreadPoolExecutor.AbortPolicy(),
+			new ThreadPoolHandlerAdapter()) {
+
+			@Override
+			public void execute(Runnable runnable) {
+				runnable.run();
+			}
+
+		};
+
+	private class MockAntivirusScanner implements AntivirusScanner {
+
+		public MockAntivirusScanner(
+			UnsafeRunnable<AntivirusScannerException> unsafeRunnable) {
+
+			_unsafeRunnable = unsafeRunnable;
+		}
+
+		@Override
+		public boolean isActive() {
+			return true;
+		}
+
+		@Override
+		public void scan(byte[] bytes) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void scan(File file) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void scan(InputStream inputStream)
+			throws AntivirusScannerException {
+
+			_unsafeRunnable.run();
+		}
+
+		private final UnsafeRunnable<AntivirusScannerException> _unsafeRunnable;
+
+	}
 
 }
