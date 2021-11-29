@@ -79,6 +79,15 @@
 			<liferay-ui:message arguments='<%= new Object[] {StringBundler.concat("<b>", HtmlUtil.escape(msvve.getValidationExpressionArgument()), "</b>"), StringBundler.concat("<b>", HtmlUtil.escape(msvve.getFieldName()), "</b>")} %>' key="the-validation-expression-x-set-for-field-x-is-invalid" translateArguments="<%= false %>" />
 		</liferay-ui:error>
 
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetValidVisibilityExpression.class %>">
+
+			<%
+			DDMFormValidationException.MustSetValidVisibilityExpression msvve = (DDMFormValidationException.MustSetValidVisibilityExpression)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(msvve.getVisibilityExpression()), HtmlUtil.escape(msvve.getFieldName())} %>" key="the-visibility-expression-x-set-for-field-x-is-invalid" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
 		<liferay-ui:error exception="<%= DDMFormValuesValidationException.MustSetValidValue.class %>">
 
 			<%
@@ -92,15 +101,6 @@
 			%>
 
 			<liferay-ui:message arguments="<%= HtmlUtil.escape(fieldLabelValue) %>" key="validation-failed-for-field-x" translateArguments="<%= false %>" />
-		</liferay-ui:error>
-
-		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetValidVisibilityExpression.class %>">
-
-			<%
-			DDMFormValidationException.MustSetValidVisibilityExpression msvve = (DDMFormValidationException.MustSetValidVisibilityExpression)errorException;
-			%>
-
-			<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(msvve.getVisibilityExpression()), HtmlUtil.escape(msvve.getFieldName())} %>" key="the-visibility-expression-x-set-for-field-x-is-invalid" translateArguments="<%= false %>" />
 		</liferay-ui:error>
 
 		<liferay-ui:error exception="<%= FormInstanceFieldSettingsException.MustSetValidValueForProperties.class %>">
