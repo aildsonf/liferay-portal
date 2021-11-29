@@ -137,38 +137,39 @@ public class SXPBlueprintResourceImpl
 		return SearchUtil.search(
 			Collections.emptyMap(),
 			booleanQuery1 -> {
-				if (!Validator.isBlank(search)) {
-					BooleanQuery booleanQuery2 = new BooleanQueryImpl() {
-						{
-							MultiMatchQuery multiMatchQuery =
-								new MultiMatchQuery(search);
-
-							multiMatchQuery.addFields(
-								Arrays.asList(
-									LocalizationUtil.getLocalizedName(
-										Field.DESCRIPTION,
-										contextAcceptLanguage.
-											getPreferredLanguageId()),
-									LocalizationUtil.getLocalizedName(
-										Field.TITLE,
-										contextAcceptLanguage.
-											getPreferredLanguageId())));
-							multiMatchQuery.setType(
-								MultiMatchQuery.Type.PHRASE_PREFIX);
-							multiMatchQuery.setOperator(
-								MatchQuery.Operator.AND);
-
-							add(multiMatchQuery, BooleanClauseOccur.SHOULD);
-
-							WildcardQuery wildcardQuery = new WildcardQueryImpl(
-								Field.USER_NAME, search + "*");
-
-							add(wildcardQuery, BooleanClauseOccur.SHOULD);
-						}
-					};
-
-					booleanQuery1.add(booleanQuery2, BooleanClauseOccur.MUST);
+				if (Validator.isBlank(search)) {
+					return;
 				}
+
+				BooleanQuery booleanQuery2 = new BooleanQueryImpl() {
+					{
+						MultiMatchQuery multiMatchQuery = new MultiMatchQuery(
+							search);
+
+						multiMatchQuery.addFields(
+							Arrays.asList(
+								LocalizationUtil.getLocalizedName(
+									Field.DESCRIPTION,
+									contextAcceptLanguage.
+										getPreferredLanguageId()),
+								LocalizationUtil.getLocalizedName(
+									Field.TITLE,
+									contextAcceptLanguage.
+										getPreferredLanguageId())));
+						multiMatchQuery.setType(
+							MultiMatchQuery.Type.PHRASE_PREFIX);
+						multiMatchQuery.setOperator(MatchQuery.Operator.AND);
+
+						add(multiMatchQuery, BooleanClauseOccur.SHOULD);
+
+						WildcardQuery wildcardQuery = new WildcardQueryImpl(
+							Field.USER_NAME, search + "*");
+
+						add(wildcardQuery, BooleanClauseOccur.SHOULD);
+					}
+				};
+
+				booleanQuery1.add(booleanQuery2, BooleanClauseOccur.MUST);
 			},
 			filter,
 			com.liferay.search.experiences.model.SXPBlueprint.class.getName(),
