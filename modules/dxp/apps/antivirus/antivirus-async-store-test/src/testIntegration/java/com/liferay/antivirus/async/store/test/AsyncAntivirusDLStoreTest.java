@@ -30,7 +30,6 @@ import com.liferay.petra.concurrent.NoticeableThreadPoolExecutor;
 import com.liferay.petra.concurrent.ThreadPoolHandlerAdapter;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.Message;
@@ -44,6 +43,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -368,8 +368,26 @@ public class AsyncAntivirusDLStoreTest {
 
 				int count = 10;
 
-				for (int i = count; i > 0; i--) {
-					DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+				try (LogCapture logCapture =
+						LoggerTestUtil.configureLog4JLogger(
+							"com.liferay.antivirus.async.store.internal." +
+								"messaging.AntivirusAsyncMessageListener",
+							LoggerTestUtil.DEBUG)) {
+
+					for (int i = count; i > 0; i--) {
+						DLTestUtil.addDLFileEntry(dlFolder.getFolderId());
+					}
+
+					List<LogEntry> logEntries = logCapture.getLogEntries();
+
+					for (LogEntry logEntry : logEntries) {
+						String message = logEntry.getMessage();
+
+						Assert.assertTrue(
+							message.contains(
+								"into persistent storage because the async " +
+									"antivirus queue is overflowing"));
+					}
 				}
 
 				Assert.assertTrue(
