@@ -170,11 +170,11 @@ public class SXPElementResourceImpl
 			queryConfig -> queryConfig.setSelectedFieldNames(
 				Field.ENTRY_CLASS_PK),
 			searchContext -> {
+				searchContext.setCompanyId(contextCompany.getCompanyId());
+
 				if (!Validator.isBlank(search)) {
 					searchContext.setKeywords("");
 				}
-
-				searchContext.setCompanyId(contextCompany.getCompanyId());
 			},
 			sorts,
 			document -> _sxpElementDTOConverter.toDTO(
