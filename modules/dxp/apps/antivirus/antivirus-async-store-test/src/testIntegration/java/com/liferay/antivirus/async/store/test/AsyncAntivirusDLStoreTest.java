@@ -121,7 +121,8 @@ public class AsyncAntivirusDLStoreTest {
 			AntivirusAsyncEventListener.class,
 			_create(
 				HashMapBuilder.<AntivirusAsyncEvent, Runnable>put(
-					AntivirusAsyncEvent.MISSING, () -> firedEventMissing.set(true)
+					AntivirusAsyncEvent.MISSING,
+					() -> firedEventMissing.set(true)
 				).build()),
 			null);
 		_registerService(
@@ -254,7 +255,8 @@ public class AsyncAntivirusDLStoreTest {
 					AntivirusAsyncEvent.PREPARE,
 					() -> firedEventPrepare.set(true)
 				).put(
-					AntivirusAsyncEvent.SUCCESS, () -> firedEventSuccess.set(true)
+					AntivirusAsyncEvent.SUCCESS,
+					() -> firedEventSuccess.set(true)
 				).build()),
 			null);
 		_registerService(
@@ -380,7 +382,6 @@ public class AsyncAntivirusDLStoreTest {
 		AtomicInteger firedEventVirusFound = new AtomicInteger();
 
 		Random random = new Random();
-
 
 		_registerService(
 			AntivirusAsyncEventListener.class,
