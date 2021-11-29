@@ -58,7 +58,6 @@ definition {
 	@description = "LPS-142178 - Verify if when Raylife is created, a Catalog in Commerce will be created for it as well."
 	@priority = "5"
 	test CatalogForRaylifeIsCreated {
-
 		Raylife.createRaylifeSite(siteName = "Raylife");
 
 		CommerceNavigator.gotoPortlet(
@@ -81,7 +80,6 @@ definition {
 	@description = "LPS-142180 - Verify if, when Raylife is created, Products related to Raylife are also created."
 	@priority = "5"
 	test ProductsForRaylifeIsCreated {
-
 		Raylife.createRaylifeSite(siteName = "Raylife");
 
 		CommerceNavigator.gotoPortlet(

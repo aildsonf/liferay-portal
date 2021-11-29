@@ -21,11 +21,11 @@
 	<td></td>
 </tr>
 <tr>
-    <td>FORMS_FIELDS</td>
-    <td>css=liferay-remote-app-raylife>>>[name='${label}']</td>
-    <td></td>
+	<td>FORMS_FIELDS</td>
+	<td>css=liferay-remote-app-raylife>>>[name='${label}']</td>
+	<td></td>
 </tr>
-<tr> 
+<tr>
 	<td>TABLE_CATALOG_NAME</td>
 	<td>//a[contains(text(),'${name}')]</td>
 	<td></td>
@@ -44,7 +44,7 @@
 	<td>BUTTON_DISMISS</td>
 	<td>//button[@id='dismiss']</td>
 	<td></td>
-</tr>																		
+</tr>
 <tr>
 	<td>HIDE_DISMISS_BUTTON</td>
 	<td>//div[contains(@class, "hide")]</td>
@@ -98,12 +98,12 @@
 <tr>
 	<td>BUTTON_YES_OPTION</td>
 	<td>css=liferay-remote-app-raylife>>>[for='${field}']+.switch-wrapper button</td>
-    <td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>BUTTON_NO_OPTION</td>
 	<td>css=liferay-remote-app-raylife>>>[for='${field}']+.switch-wrapper button+button</td>
-    <td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>ERROR_MESSAGE</td>
