@@ -31,7 +31,7 @@ import org.osgi.annotation.versioning.ProviderType;
 	rules = {
 		@DDMFormRule(
 			actions = {
-				"setEnabled('expirationDate', equals(getValue('neverExpire'), FALSE))",
+				"setEnabled('expirationDate', NOT(getValue('neverExpire')))",
 				"setVisible('emailFromAddress', getValue('sendEmailNotification'))",
 				"setVisible('emailFromName', getValue('sendEmailNotification'))",
 				"setVisible('emailSubject', getValue('sendEmailNotification'))",
