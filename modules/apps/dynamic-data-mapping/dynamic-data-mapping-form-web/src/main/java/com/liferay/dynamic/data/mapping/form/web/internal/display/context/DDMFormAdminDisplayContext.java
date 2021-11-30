@@ -1217,11 +1217,6 @@ public class DDMFormAdminDisplayContext {
 		return true;
 	}
 
-	public boolean isExpirationDateEnabled() {
-		return _ffSubmissionsSettingsConfigurationActivator.
-			expirationDateEnabled();
-	}
-
 	public boolean isFormExpired(DDMFormInstance ddmFormInstance)
 		throws PortalException {
 

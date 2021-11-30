@@ -135,27 +135,25 @@ FormInstancePermissionCheckerHelper formInstancePermissionCheckerHelper = ddmFor
 									value="<%= HtmlUtil.escape(formInstance.getDescription(locale)) %>"
 								/>
 
-								<c:if test="<%= ddmFormAdminDisplayContext.isExpirationDateEnabled() %>">
-									<liferay-ui:search-container-column-text
-										cssClass="text-nowrap"
-										name="status"
-									>
-										<c:choose>
-											<c:when test="<%= !ddmFormAdminDisplayContext.isFormExpired(formInstance) %>">
-												<clay:label
-													displayType="success"
-													label="available"
-												/>
-											</c:when>
-											<c:otherwise>
-												<clay:label
-													displayType="danger"
-													label="expired"
-												/>
-											</c:otherwise>
-										</c:choose>
-									</liferay-ui:search-container-column-text>
-								</c:if>
+								<liferay-ui:search-container-column-text
+									cssClass="text-nowrap"
+									name="status"
+								>
+									<c:choose>
+										<c:when test="<%= !ddmFormAdminDisplayContext.isFormExpired(formInstance) %>">
+											<clay:label
+												displayType="success"
+												label="available"
+											/>
+										</c:when>
+										<c:otherwise>
+											<clay:label
+												displayType="danger"
+												label="expired"
+											/>
+										</c:otherwise>
+									</c:choose>
+								</liferay-ui:search-container-column-text>
 
 								<liferay-ui:search-container-column-date
 									cssClass="table-cell-expand-smaller"
