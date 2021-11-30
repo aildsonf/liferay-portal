@@ -172,12 +172,13 @@ public class SXPBlueprintSearchRequestEnhancerImplTest {
 		Assert.assertTrue(MapUtil.isEmpty(searchRequest.getAggregationsMap()));
 		Assert.assertTrue(
 			ListUtil.isEmpty(searchRequest.getComplexQueryParts()));
-		Assert.assertTrue(ListUtil.isEmpty(searchRequest.getSorts()));
 
 		com.liferay.portal.search.highlight.Highlight highlight =
 			searchRequest.getHighlight();
 
 		Assert.assertTrue(ListUtil.isEmpty(highlight.getFieldConfigs()));
+
+		Assert.assertTrue(ListUtil.isEmpty(searchRequest.getSorts()));
 
 		_assert(sxpBlueprint);
 	}
