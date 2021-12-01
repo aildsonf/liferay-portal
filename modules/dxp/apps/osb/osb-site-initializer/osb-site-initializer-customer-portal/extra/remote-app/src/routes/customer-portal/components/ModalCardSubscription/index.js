@@ -79,7 +79,6 @@ const ModalCardSubscription = ({ observer, onClose }) => {
 
 
       </ClayModal>
-      <StatusTag currentStatus={status.active} />
     </>
   )
 }

@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/client';
-import { useContext, useEffect, useState } from 'react';
+import {useQuery} from '@apollo/client';
+import {useContext, useEffect, useState} from 'react';
 import {
 	onboardingPageGuard,
 	overviewPageGuard,
@@ -11,23 +11,23 @@ import {
 } from '../../../../common/services/liferay/graphql/queries';
 import SubscriptionsBar from '../../components/SubscriptionsBar';
 import SubscriptionsCards from '../../components/SubscriptionsCards';
-import { AppContext } from '../../context';
-import { actionTypes } from '../../context/reducer';
-import { CUSTOM_EVENTS } from '../../utils/constants';
+import {AppContext} from '../../context';
+import {actionTypes} from '../../context/reducer';
+import {CUSTOM_EVENTS} from '../../utils/constants';
 
-const Overview = ({ userAccount }) => {
-	const [{ project }, dispatch] = useContext(AppContext);
-  const [subscriptionsTags, setSubscriptionsTags] = useState(() => []);
-  const [selectedTag, setSelectedTag] = useState(() => '')
+const Overview = ({userAccount}) => {
+	const [{project}, dispatch] = useContext(AppContext);
+	const [subscriptionsTags, setSubscriptionsTags] = useState(() => []);
+	const [selectedTag, setSelectedTag] = useState(() => '');
 
-	const { isLoading } = usePageGuard(
+	const {isLoading} = usePageGuard(
 		userAccount,
 		overviewPageGuard,
 		onboardingPageGuard,
 		project.accountKey
 	);
-  
-	const { data, isLoading: isLoadingKoroneiki } = useQuery(
+
+	const {data, isLoading: isLoadingKoroneiki} = useQuery(
 		getKoroneikiAccounts,
 		{
 			variables: {
@@ -64,25 +64,34 @@ const Overview = ({ userAccount }) => {
 		}
 	}, [data, dispatch, isLoading]);
 
-  useEffect(() => {
-    if (!isAccountSubscriptionsLoading && accountSubscriptionsData) {
+	useEffect(() => {
+		if (!isAccountSubscriptionsLoading && accountSubscriptionsData) {
 			setSubscriptionsTags(
 				accountSubscriptionsData?.c?.accountSubscriptionGroups?.items ||
 					[]
 			);
 		}
-  }, [accountSubscriptionsData, isAccountSubscriptionsLoading])
+	}, [accountSubscriptionsData, isAccountSubscriptionsLoading]);
 
 	if (isLoading || isLoadingKoroneiki) {
 		return <div>Overview Skeleton</div>;
 	}
 
 	return (
-		<div>
+		<div className="d-flex flex-column mx-4">
 			Overview Page
-			{!isAccountSubscriptionsLoading && <SubscriptionsBar selectedTag={selectedTag} setSelectedTag={setSelectedTag} subscriptionsTags={subscriptionsTags} />}
+			{!isAccountSubscriptionsLoading && (
+				<SubscriptionsBar
+					selectedTag={selectedTag}
+					setSelectedTag={setSelectedTag}
+					subscriptionsTags={subscriptionsTags}
+				/>
+			)}
 
-      <SubscriptionsCards accountKey={project.accountKey} selectedTag={selectedTag}/>
+			<SubscriptionsCards
+				accountKey={project.accountKey}
+				selectedTag={selectedTag}
+			/>
 		</div>
 	);
 };

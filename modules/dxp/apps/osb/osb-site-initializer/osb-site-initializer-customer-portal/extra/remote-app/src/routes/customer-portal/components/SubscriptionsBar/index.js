@@ -9,9 +9,9 @@ const SubscriptionsBar = ({ setSelectedTag, subscriptionsTags }) => {
   useEffect(() => setSelectedTag(subscriptionsTags[0]?.name || ''), [setSelectedTag, subscriptionsTags])
 
 	return (
-		<nav>
+		<nav className="my-4">
 			{subscriptionsTags && subscriptionsTags.map((tag) => (
-				<button key={tag.name} onClick={handleClick} value={tag.name}>{tag.name}</button>
+				<button className="mr-2" key={tag.name} onClick={handleClick} value={tag.name}>{tag.name}</button>
 			))}
 		</nav>
 	);

@@ -21,9 +21,9 @@ const SubscriptionsCards = ({accountKey, selectedTag}) => {
   console.log(items);
 
   return(
-    <>{!isSubscriptionsByTagLoading && items.map((item, index) => (
+    <div className="d-flex flex-wrap">{!isSubscriptionsByTagLoading && items.map((item, index) => (
       <CardSubscription cardSubscriptionData={item} key={index} />
-    ))}</>
+    ))}</div>
   )
 }
 

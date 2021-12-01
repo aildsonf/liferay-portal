@@ -20,8 +20,7 @@ const CardSubscription = ({cardSubscriptionData}) => {
   return (
     <>
       {visible && <ModalCardSubscription observer={observer} onClose={onClose} />}
-      <div className="card-subscription" onClick={() => {
-
+      <div className="card-subscription mr-4" onClick={() => {
         setVisible(true)
         }}>
         <div className="card-body">
