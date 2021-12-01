@@ -4,11 +4,11 @@ import {
 	onboardingPageGuard,
 	overviewPageGuard,
 	usePageGuard,
-} from '~/common/hooks/usePageGuard';
+} from '../../../../common/hooks/usePageGuard';
 import {
 	getAccountSubscriptionGroupsByFilter,
 	getKoroneikiAccounts,
-} from '~/common/services/liferay/graphql/queries';
+} from '../../../../common/services/liferay/graphql/queries';
 import SubscriptionsBar from '../../components/SubscriptionsBar';
 import SubscriptionsCards from '../../components/SubscriptionsCards';
 import { AppContext } from '../../context';

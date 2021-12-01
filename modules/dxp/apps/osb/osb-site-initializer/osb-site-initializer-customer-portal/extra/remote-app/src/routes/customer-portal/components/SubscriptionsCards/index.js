@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import {getAccountSubscriptions} from '~/common/services/liferay/graphql/queries';
+import {getAccountSubscriptions} from '../../../../common/services/liferay/graphql/queries';
 import CardSubscription from '../CardSubscription/CardSubscription';
 
 const SubscriptionsCards = ({accountKey, selectedTag}) => {
