@@ -2,7 +2,7 @@ import {useQuery} from '@apollo/client';
 import React, {useState} from 'react';
 import {getAccountSubscriptions} from '../../../../common/services/liferay/graphql/queries';
 import CardSubscription from '../CardSubscription';
-import SubscriptionsBar from '../SubscriptionsBar';
+import SubscriptionsNavbar from '../SubscriptionsNavbar';
 
 const Subscriptions = ({accountKey}) => {
 	const [selectedTag, setSelectedTag] = useState(() => '');
@@ -34,7 +34,7 @@ const Subscriptions = ({accountKey}) => {
 		<div className="d-flex flex-column mx-4">
 			<h3>Subscriptions</h3>
 
-			<SubscriptionsBar
+			<SubscriptionsNavbar
 				accountKey={accountKey}
 				setSelectedStatus={setSelectedStatus}
 				setSelectedTag={setSelectedTag}
