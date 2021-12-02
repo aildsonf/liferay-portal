@@ -1,5 +1,34 @@
 import {gql} from '@apollo/client';
 
+export const getAccountSubscriptionsTerms = gql`
+	query accountSubscriptionsTerms(
+		$filter: String
+		$page: Int
+		$pageSize: Int
+	) {
+		c {
+			accountSubscriptionTerms(
+				filter: $filter
+				page: $page
+				pageSize: $pageSize
+			) {
+				items {
+					accountKey
+					accountSubscriptionERC
+					accountSubscriptionGroupERC
+					accountSubscriptionTermId
+					c_accountSubscriptionTermId
+					endDate
+					instanceSize
+					quantity
+					startDate
+					subscriptionTermStatus
+				}
+			}
+		}
+	}
+`;
+
 export const getAccountSubscriptionGroupsByFilter = gql`
 	query accountSubscriptionGroups($filter: String) {
 		c {
@@ -15,9 +44,7 @@ export const getAccountSubscriptionGroupsByFilter = gql`
 export const getAccountSubscriptions = gql`
 	query accountSubscriptions($filter: String) {
 		c {
-			accountSubscriptions(
-				filter: $filter
-			) {
+			accountSubscriptions(filter: $filter) {
 				items {
 					accountKey
 					accountSubscriptionId
