@@ -6,18 +6,21 @@ import {
 	usePageGuard,
 } from '../../../../common/hooks/usePageGuard';
 import {getKoroneikiAccounts} from '../../../../common/services/liferay/graphql/queries';
+import Subscriptions from '../../components/Subscriptions';
 import {AppContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {CUSTOM_EVENTS} from '../../utils/constants';
 
 const Overview = ({userAccount}) => {
 	const [{project}, dispatch] = useContext(AppContext);
+
 	const {isLoading} = usePageGuard(
 		userAccount,
 		overviewPageGuard,
 		onboardingPageGuard,
 		project.accountKey
 	);
+
 	const {data, isLoading: isLoadingKoroneiki} = useQuery(
 		getKoroneikiAccounts,
 		{
@@ -44,14 +47,17 @@ const Overview = ({userAccount}) => {
 				})
 			);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [data, isLoading]);
+	}, [data, dispatch, isLoading]);
 
 	if (isLoading || isLoadingKoroneiki) {
 		return <div>Overview Skeleton</div>;
 	}
 
-	return <div>Overview Page</div>;
+	return (
+		<>
+			<Subscriptions accountKey={project.accountKey} />
+		</>
+	);
 };
 
 export default Overview;
