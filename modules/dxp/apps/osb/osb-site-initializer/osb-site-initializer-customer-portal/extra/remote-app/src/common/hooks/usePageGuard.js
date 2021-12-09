@@ -1,7 +1,7 @@
 import {useQuery} from '@apollo/client';
 import {useEffect, useState} from 'react';
 import {LiferayTheme} from '../services/liferay';
-import {getAccountRolesAndAccountFlags} from '../services/liferay/graphql/queries';
+import {pageGuard} from '../services/liferay/graphql/queries';
 import {PARAMS_KEYS} from '../services/liferay/search-params';
 
 const liferaySiteName = LiferayTheme.getLiferaySiteName();
@@ -68,7 +68,7 @@ const usePageGuard = (
 ) => {
 	const [isLoading, setLoading] = useState(true);
 
-	const {data} = useQuery(getAccountRolesAndAccountFlags, {
+	const {data} = useQuery(pageGuard, {
 		variables: {
 			accountFlagsFilter: `accountKey eq '${externalReferenceCode}' and name eq 'onboarding' and userUuid eq '${userAccount.externalReferenceCode}' and value eq 1`,
 			accountId: userAccount.id,
