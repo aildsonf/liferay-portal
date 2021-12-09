@@ -12,7 +12,7 @@ export const getAccountSubscriptionsTerms = gql`
 				page: $page
 				pageSize: $pageSize
 			) {
-				totalCount,
+				totalCount
 				items {
 					accountKey
 					accountSubscriptionERC
