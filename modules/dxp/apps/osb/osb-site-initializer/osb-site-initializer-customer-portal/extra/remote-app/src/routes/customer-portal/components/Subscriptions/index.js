@@ -58,9 +58,7 @@ const Subscriptions = ({accountKey}) => {
 
 			<SubscriptionsNavbar
 				accountKey={accountKey}
-				possibleStatusAmount={POSSIBLE_STATUS_AMOUNT}
-				selectedStatus={selectedStatus}
-				setSelectedStatus={setSelectedStatus}
+				selectedSubscriptionGroup={selectedSubscriptionGroup}
 				setSelectedSubscriptionGroup={setSelectedSubscriptionGroup}
 			/>
 
